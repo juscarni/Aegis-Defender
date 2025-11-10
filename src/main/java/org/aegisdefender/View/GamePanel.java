@@ -48,6 +48,4 @@ public class GamePanel extends JPanel {
             g.drawLine(x,0,x,getHeight()-1);
         }
     }
-
 }
-

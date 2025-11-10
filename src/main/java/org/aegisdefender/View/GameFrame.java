@@ -10,5 +10,6 @@ public class GameFrame extends JFrame {
         this.pack();
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
+        System.out.println("this is name!");
     }
 }
