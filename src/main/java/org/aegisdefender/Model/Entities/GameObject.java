@@ -1,5 +1,9 @@
 package org.aegisdefender.Model.Entities;
 
-public class GameObject {
+public abstract class GameObject {
 
+    public GameObject() {
+
+    }
 }
+

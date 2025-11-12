@@ -6,8 +6,6 @@ import javax.swing.SwingUtilities;
 
 public class Main{
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new AppController().getGameFrame().setVisible(true);
-        });
+        SwingUtilities.invokeLater(AppController::new);
     }
 }
