@@ -17,7 +17,7 @@ public class GameController extends MouseAdapter {
 
         this.gameFrame.addMouseMotionListener(this);
 
-        setMousePosition(gameFrame,this.gameModel.getPlayerX(),this.gameModel.getPlayerY());
+       // setMousePosition(gameFrame,this.gameModel.getPlayerX(),this.gameModel.getPlayerY());
 
         //initialPlayerPosition before moving the mouse
         this.gameFrame.gamePanelInstance().setPlayerPositionX(this.gameModel.getPlayerX());
@@ -31,6 +31,7 @@ public class GameController extends MouseAdapter {
         this.gameModel.setPlayerY(e.getY());
         this.gameFrame.gamePanelInstance().setPlayerPositionX(this.gameModel.getPlayerX());
         this.gameFrame.gamePanelInstance().setPlayerPositionY(this.gameModel.getPlayerY());
+        //this.gameFrame.gamePanelInstance().repaint();
         //System.out.println(this.gameModel.getPlayerX() + " , " + this.gameModel.getPlayerY());
     }
     public  void setMousePosition(GameFrame gameFrame, int x, int y) {

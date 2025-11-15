@@ -24,7 +24,7 @@ public class GameFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.requestFocus();
         this.requestFocusInWindow();
-        this.setCursor(setCursorInvisible());// get an invisible cursor
+        //this.setCursor(setCursorInvisible());// get an invisible cursor
     }
 
 
