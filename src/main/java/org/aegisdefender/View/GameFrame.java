@@ -15,6 +15,7 @@ public class GameFrame extends JFrame {
 
     private static final String CURSOR_NAME = "blank cursor";
 
+
     private GamePanel gamepanel = null;
 
     public GameFrame(){
