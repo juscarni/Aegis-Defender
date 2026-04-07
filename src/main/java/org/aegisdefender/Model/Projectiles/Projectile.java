@@ -1,11 +1,14 @@
 package org.aegisdefender.Model.Projectiles;
 
+import java.awt.Rectangle;
+
 public abstract class Projectile {
 
     private int positionLaserX;
     private int positionLaserY;
     private int laserWidth;
     private int laserHeight;
+    private int speed;
 
     public Projectile(int x , int y, int width, int height){
         this.positionLaserX = x;
@@ -28,4 +31,6 @@ public abstract class Projectile {
     public void setPositionLaserY(int y){
         this.positionLaserY = y;
     }
+    public abstract int  getSpeed();
+    public abstract Rectangle getHitBox();
 }

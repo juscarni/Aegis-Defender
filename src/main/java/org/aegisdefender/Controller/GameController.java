@@ -1,6 +1,11 @@
 package org.aegisdefender.Controller;
 
+import org.aegisdefender.Config.GameConfig;
+import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.GameModel;
+import org.aegisdefender.Model.GameObserver;
+import org.aegisdefender.Model.Projectiles.Projectile;
+import org.aegisdefender.View.EntityRenderData;
 import org.aegisdefender.View.GameFrame;
 
 import javax.swing.*;
@@ -10,17 +15,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GameController extends MouseAdapter implements ActionListener {
+import java.util.ArrayList;
+import java.util.List;
 
-    private GameFrame gameFrame = null;
-    private GameModel gameModel = null;
+public class GameController extends MouseAdapter implements ActionListener , GameObserver {
 
-    private final int TILES;
-    private final int LASER_OFFSET_PLAYERX;
-    private final int LASER_OFFSET_PLAYERY;
-    private final int FPS;
-
-    private Timer projectilleTimer = null;
+    private GameFrame gameFrame;
+    private GameModel gameModel;
+    private Timer projectilleTimer;
 
     public GameController(GameFrame gameFrame, GameModel gameModel) {
         this.gameFrame = gameFrame;
@@ -28,18 +30,10 @@ public class GameController extends MouseAdapter implements ActionListener {
 
         this.gameFrame.addMouseMotionListener(this);
         this.gameFrame.addMouseListener(this);
+
         setMousePosition(gameFrame, this.gameModel.getPlayerX(), this.gameModel.getPlayerY());
 
-        this.gameFrame.gamePanelInstance().setPlayerPositionX(this.gameModel.getPlayerX());
-        this.gameFrame.gamePanelInstance().setPlayerPositionY(this.gameModel.getPlayerY());
-
-        //
-        TILES = this.gameFrame.gamePanelInstance().TILES;
-        LASER_OFFSET_PLAYERX = this.gameFrame.gamePanelInstance().LASER_OFFSET_PLAYERX;
-        LASER_OFFSET_PLAYERY = this.gameFrame.gamePanelInstance().LASER_OFFSET_PLAYERY;
-        FPS = this.gameFrame.gamePanelInstance().FPS;
-
-        projectilleTimer = new Timer(1000/FPS , this);
+        projectilleTimer = new Timer(1000/ GameConfig.FPS , this);
         projectilleTimer.start();
     }
 
@@ -48,17 +42,13 @@ public class GameController extends MouseAdapter implements ActionListener {
         super.mouseMoved(e);
         this.gameModel.setPLayerX(e.getX());
         this.gameModel.setPlayerY(e.getY());
-        this.gameFrame.gamePanelInstance().setPlayerPositionX(this.gameModel.getPlayerX());
-        this.gameFrame.gamePanelInstance().setPlayerPositionY(this.gameModel.getPlayerY());
-        this.gameFrame.gamePanelInstance().repaint();
-        //System.out.println(this.gameModel.getPlayerX() + " , " + this.gameModel.getPlayerY());
     }//
 
     @Override
     public void mousePressed(MouseEvent e) {
         switch (e.getButton()) {
             case MouseEvent.BUTTON1 -> {
-               this.gameModel.setPlayerProjectile(TILES, LASER_OFFSET_PLAYERX, LASER_OFFSET_PLAYERY);
+               this.gameModel.setPlayerProjectile(UIConfig.TILES, GameConfig.LASER_OFFSET_PLAYERX, GameConfig.LASER_OFFSET_PLAYERY);
             }
             case MouseEvent.BUTTON2 -> {
                // to-do
@@ -84,10 +74,27 @@ public class GameController extends MouseAdapter implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // update model
         this.gameModel.updateProjectiles();
-        var projectiles = this.gameModel.getPlayerProjectile();
-        this.gameFrame.gamePanelInstance().setPlayerLasers(projectiles);
-        this.gameFrame.gamePanelInstance().repaint();
+    }
+
+    @Override
+    public void updatePlayerPosition(int x, int y) {
+        gameFrame.getGamePanel().updatePlayerPosition(x,y);
+    }
+
+    @Override
+    // use of Data-transfert-Object (DTO)
+    public void updateProjectiles(List<Projectile> projectiles) {
+        List<EntityRenderData> data = new ArrayList<>();
+        for(Projectile projectile : projectiles){
+            data.add(new EntityRenderData(
+                 projectile.getPositionLaserX(),
+                 projectile.getPositionLaserY(),
+                 projectile.getLaserWidth(),
+                 projectile.getLaserHeight(),
+                 projectile.getHitBox()   // ---
+            ));
+        }
+        gameFrame.getGamePanel().updatePlayerProjectiles(data);
     }
 }

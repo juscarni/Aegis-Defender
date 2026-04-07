@@ -1,20 +1,16 @@
 package org.aegisdefender.Config;
 
 public class UIConfig {
+    public static final int TILES = 40;
 
-    public final int TILES = 40;
-    public final int LASER_OFFSET_PLAYERX = 7;
-    public final int LASER_OFFSET_PLAYERY = TILES - 20;
-    public final  int FPS = 30;
+    public static final int ROWS  = 18;
+    public static final int COLS = 14;
 
-    public final int ROWS  = 18;
-    public final int COLS = 14;
+    public static final int WINDOW_WIDTH =  COLS * TILES;// 560px
+    public static final int WINDOW_HEIGHT = ROWS * TILES;; // 720px
 
-    public final int WINDOW_WIDTH =  COLS * TILES;// 560px
-    public final int WINDOW_HEIGHT = ROWS * TILES;; // 720px
-
-    public final int DRAW_OFFSET_X = 45;
-    public final int DRAW_OFFSET_Y = 65;
+    public static final int DRAW_OFFSET_X = 45;
+    public static final int DRAW_OFFSET_Y = 65;
 
 
     public static final int CURSOR_IMG_SIZE = 16;
