@@ -1,5 +1,7 @@
 package org.aegisdefender.Model;
 
+import org.aegisdefender.Model.Entities.Enemies.Enemy;
+import org.aegisdefender.Model.Entities.Enemies.EnemyFactory;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.PlayerLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
@@ -11,8 +13,8 @@ public class GameModel{
 
     private Player player;
     private Projectile projectile;
-    private PlayerLaser laser;
     private List<Projectile> projectiles;
+    private List<Enemy>  enemies;
 
     private List<GameObserver> observer;
 
@@ -20,6 +22,12 @@ public class GameModel{
     public GameModel(){
         player = new Player();
         projectiles  = new ArrayList<>();
+
+        //
+        EnemyFactory enemyFactory = new EnemyFactory();
+        enemies = enemyFactory.createEnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,5);
+
+        //
         observer = new ArrayList<>();
     }
 
@@ -67,5 +75,15 @@ public class GameModel{
             }
         }
         notifyObserver();
+    }
+
+    public List<Enemy> getEnemies(){
+        return new ArrayList<>(enemies);
+    }
+
+    public void updateEnemy(){
+        for(Enemy enemy :  enemies){
+            enemy.move();
+        }
     }
 }

@@ -2,9 +2,12 @@ package org.aegisdefender.Controller;
 
 import org.aegisdefender.Config.GameConfig;
 import org.aegisdefender.Config.UIConfig;
+
+import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.GameModel;
 import org.aegisdefender.Model.GameObserver;
 import org.aegisdefender.Model.Projectiles.Projectile;
+
 import org.aegisdefender.View.EntityRenderData;
 import org.aegisdefender.View.GameFrame;
 
@@ -75,6 +78,9 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
     @Override
     public void actionPerformed(ActionEvent e) {
         this.gameModel.updateProjectiles();
+
+        updateEnemies(this.gameModel.getEnemies());
+        this.gameModel.updateEnemy(); //
     }
 
     @Override
@@ -92,9 +98,23 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
                  projectile.getPositionLaserY(),
                  projectile.getLaserWidth(),
                  projectile.getLaserHeight(),
-                 projectile.getHitBox()   // ---
+                 projectile.getHitBox()   // --- just for the debug
             ));
         }
         gameFrame.getGamePanel().updatePlayerProjectiles(data);
+    }
+
+    public void updateEnemies(List<Enemy> enemies){
+        List<EntityRenderData> data = new ArrayList<>();
+        for(Enemy enemy : enemies){
+            data.add(new EntityRenderData(
+                    enemy.getEnemyX(),
+                    enemy.getEnemyY(),
+                    enemy.getWidth(),
+                    enemy.getHeight(),
+                    enemy.getHitBox()   // --- just for the debug
+            ));
+        }
+        this.gameFrame.getGamePanel().updateEnemies(data);
     }
 }

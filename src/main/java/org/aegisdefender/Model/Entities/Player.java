@@ -1,20 +1,42 @@
 package org.aegisdefender.Model.Entities;
 
+import org.aegisdefender.Model.Entities.Enemies.Enemy;
+
 public class Player {
 
-    private int initialPositionPlayerX = 285;
-    private int initialPositionPlayerY = 660;
+    private int x = 285;
+    private int y = 660;
+
+    private int health = 100;
+
+    private boolean isAlive = true;
+    private int attackPower = 25;
+
 
     public void setX(int playerX){
-        this.initialPositionPlayerX = playerX;
+        this.x= playerX;
     }
     public void setY(int playerY){
-        this.initialPositionPlayerY = playerY;
+        this.y = playerY;
     }
     public int getX(){
-        return this.initialPositionPlayerX;
+        return this.x;
     }
     public int  getY(){
-        return this.initialPositionPlayerY;
+        return this.y;
+    }
+    public boolean isAlive(){
+        return isAlive;
+    }
+
+    public void takeDamaged(int amount){
+        health -= amount;
+        if(health <= 0){
+            health = 0;
+            isAlive = false;
+        }
+    }
+    public void attack(Enemy enemy){
+        enemy.takeDamage(this, attackPower);
     }
 }

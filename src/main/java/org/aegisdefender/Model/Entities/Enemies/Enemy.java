@@ -2,23 +2,43 @@ package org.aegisdefender.Model.Entities.Enemies;
 
 import org.aegisdefender.Model.Entities.Player;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
-public interface Enemy {
-    void takeDamage(Player player, int amount);
-    void attack(Player player);
+public abstract class Enemy {
 
-    void update();
-    void move();
-    void enemyBehavior();
+    protected int x;
+    protected int y;
+    protected int speed;
+    protected int health;
+    protected int width;
+    protected int height;
+    protected boolean isAlive = true;
 
-    void setX(int x);
-    void setY(int y);
-    int getEnemyX();
-    int getEnemyY();
+    public void update() {
+        move();
+        enemyBehavior();
+    }
+    public void takeDamage(Player player, int amount){
+        this.health -= amount;
+        if (this.health <= 0) {
+            this.health = 0;
+            this.isAlive = false;
+        }
+    }
 
-    int getHealth();
-    boolean isAlive();
+    public void setX(int x) {this.x = x;}
+    public void setY(int y) {this.y = y;}
+    public int getEnemyX() {return this.x;}
+    public int getEnemyY() {return this.y;}
+    public int getHealth() {return this.health;}
+    public boolean isAlive() {return this.isAlive;}
+    public int getWidth(){return this.width;}
+    public int getHeight(){return this.height;}
 
-    Rectangle getHitBox();
+
+    public abstract Rectangle getHitBox();
+    public abstract void enemyBehavior();
+    public abstract void attack(Player player);
+    public abstract String getType();
+    public abstract void move();
 }

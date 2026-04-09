@@ -1,28 +1,31 @@
 package org.aegisdefender.Model.Entities.Enemies;
 
+import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.Entities.Player;
 
 import java.awt.Rectangle;
 
-public class Kamikaze implements Enemy{
-    @Override
-    public void takeDamage(Player player, int amount) {
+public class Kamikaze extends Enemy{
 
+    private int attackPower = 30;
+
+    public Kamikaze(){
+        this.x = 100;
+        this.y = -10;
+        this.speed = 5;
+        this.health = 100;
+        this.width = UIConfig.TILES;
+        this.height = UIConfig.TILES;
     }
 
     @Override
     public void attack(Player player) {
-
-    }
-
-    @Override
-    public void update() {
-
+        player.takeDamaged(attackPower);
     }
 
     @Override
     public void move() {
-
+        this.y += speed;
     }
 
     @Override
@@ -31,37 +34,16 @@ public class Kamikaze implements Enemy{
     }
 
     @Override
-    public void setX(int x) {
-
-    }
-
-    @Override
-    public void setY(int y) {
-
-    }
-
-    @Override
-    public int getEnemyX() {
-        return 0;
-    }
-
-    @Override
-    public int getEnemyY() {
-        return 0;
-    }
-
-    @Override
-    public int getHealth() {
-        return 0;
-    }
-
-    @Override
-    public boolean isAlive() {
-        return false;
-    }
-
-    @Override
     public Rectangle getHitBox() {
-        return null;
+        return new Rectangle(
+                this.x + 2 ,
+                this.y + 2,
+                this.width - 4,
+                this.height - 4);
+    }
+
+    @Override
+    public String getType(){
+        return EnemyFactory.EnemyType.KAMIKAZE.name();
     }
 }

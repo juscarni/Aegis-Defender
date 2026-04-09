@@ -19,10 +19,12 @@ public class GamePanel extends JPanel implements ActionListener{
     private Image playerImage;
     private Image backgroundImage;
     private Image playerLaser;
+    private Image kamikaze;
 
     private Timer backgroundImageTimer;
 
     private List<EntityRenderData> playerProjectiles;
+    private List<EntityRenderData> enemies;
 
 
     public GamePanel(){
@@ -35,6 +37,7 @@ public class GamePanel extends JPanel implements ActionListener{
         backgroundImageTimer.start();
 
         this.playerProjectiles = new ArrayList<>();
+        this.enemies = new ArrayList<>(); ///
     }
 
      @Override
@@ -42,10 +45,10 @@ public class GamePanel extends JPanel implements ActionListener{
         super.paintComponent(g);
         drawBackgroundImage(g);// backgroundImageScroll
          drawProjectiles(g);
+         drawEnemies(g);
         drawPlayerImage(g);
         drawPanel(g);
     }
-
     public void drawPanel(Graphics g){
         g.setColor(Color.gray);
         int y = 0;
@@ -99,7 +102,7 @@ public class GamePanel extends JPanel implements ActionListener{
                    projectile.height,
                    null
            );
-
+           // HitBox draw
            g.setColor(Color.RED);
            g.drawRect(projectile.hitbox.x, projectile.hitbox.y, projectile.hitbox.width, projectile.hitbox.height);
        }
@@ -116,8 +119,28 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     public void loadGameImages(){
-        playerImage = new ImageIcon(getClass().getResource("/Images/AegisDefender_shield_transition_actif.png")).getImage();
+        playerImage = new ImageIcon(getClass().getResource("/Images/AegisDefender.png")).getImage();
         backgroundImage = new ImageIcon(getClass().getResource("/Images/2.jpg")).getImage();
         playerLaser  = new ImageIcon(getClass().getResource("/Images/AegisDefender_Bullet.png")).getImage();
+        kamikaze = new ImageIcon(getClass().getResource("/Images/Kamikaze_idle.png")).getImage();
+    }
+    public void updateEnemies(List<EntityRenderData> enemies){
+        this.enemies = enemies;
+        repaint();
+    }
+
+    private void drawEnemies(Graphics g) {
+        for(EntityRenderData enemy : this.enemies){
+            g.drawImage(kamikaze,
+                    enemy.x,
+                    enemy.y,
+                    enemy.width,
+                    enemy.height,
+                    null
+            );
+            // HitBox draw
+            g.setColor(Color.RED);
+            g.drawRect(enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height);
+        }
     }
 }
