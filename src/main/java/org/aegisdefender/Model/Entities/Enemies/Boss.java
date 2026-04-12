@@ -12,7 +12,7 @@ public class Boss extends Enemy{
     }
 
     @Override
-    public void enemyBehavior() {
+    public void enemyBehavior(Player player) {
 
     }
 
@@ -27,7 +27,7 @@ public class Boss extends Enemy{
     }
 
     @Override
-    public void move() {
+    public void move(Player player) {
 
     }
 }

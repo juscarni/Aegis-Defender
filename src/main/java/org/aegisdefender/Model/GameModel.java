@@ -3,6 +3,7 @@ package org.aegisdefender.Model;
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.Entities.Enemies.EnemyFactory;
 import org.aegisdefender.Model.Entities.Player;
+
 import org.aegisdefender.Model.Projectiles.PlayerLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
@@ -10,24 +11,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameModel{
-
     private Player player;
     private Projectile projectile;
-    private List<Projectile> projectiles;
-    private List<Enemy>  enemies;
 
+    private List<Projectile> projectiles;
     private List<GameObserver> observer;
+
+    private List<Enemy>  kamikaze;
+    private List<Enemy> posamine;
+    private List<List<Enemy>> enemies;
 
     //------------//
     public GameModel(){
         player = new Player();
         projectiles  = new ArrayList<>();
 
-        //
         EnemyFactory enemyFactory = new EnemyFactory();
-        enemies = enemyFactory.createEnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,5);
+        kamikaze = enemyFactory.createEnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,6,3);
+        posamine = enemyFactory.createEnemyGroup(EnemyFactory.EnemyType.POSAMINE , 3 ,2); // le pattern ne sera pas utilisé
 
-        //
+        //enemies list of list
+        enemies = new ArrayList<>();
+        enemies.add(kamikaze);
+        enemies.add(posamine);
+
         observer = new ArrayList<>();
     }
 
@@ -37,9 +44,10 @@ public class GameModel{
     public void removeObserver(GameObserver ob){
         observer.remove(ob);
     }
+
     public void notifyObserver(){
         for(GameObserver ob: observer){
-            ob.updatePlayerPosition(player.getX(),player.getY());
+            ob.updatePlayer(player.getX(),player.getY(),player.getPlayerWidth(),player.getPlayerHeight());
             ob.updateProjectiles(new ArrayList<>(projectiles));
         }
     }
@@ -53,14 +61,13 @@ public class GameModel{
         player.setY(y);
         notifyObserver();
     }
+
     public int getPlayerX(){return player.getX();}
     public int getPlayerY(){return player.getY();}
     public void init(){notifyObserver();}
 
-    public void setPlayerProjectile(int TILE , int offSetX, int offSetY){
-       projectile = new PlayerLaser(player.getX() - offSetX,
-                                    player.getY() - offSetY,
-                                    TILE/4,TILE/2);
+    public void spawnPlayerProjectile(){
+       projectile = new PlayerLaser(player);
        projectiles.add(projectile);
     }
 
@@ -68,8 +75,8 @@ public class GameModel{
     public void updateProjectiles() {
         for (int i = 0; i < projectiles.size(); i++) {
             projectile = projectiles.get(i);
-            projectile.setPositionLaserY(projectile.getPositionLaserY() + projectile.getSpeed());
-            if (projectile.getPositionLaserY() < - 50) {
+            projectile.setLaserY(projectile.getLaserY() + projectile.getSpeed());
+            if (projectile.getLaserY() < - 50) {
                 projectiles.remove(i);
                 i--;
             }
@@ -77,13 +84,15 @@ public class GameModel{
         notifyObserver();
     }
 
-    public List<Enemy> getEnemies(){
-        return new ArrayList<>(enemies);
+    public List<Enemy> getKamikaze(){
+        return new ArrayList<>(kamikaze);
     }
+    public List<Enemy> getPosamine(){return  new ArrayList<>(posamine);}
+
 
     public void updateEnemy(){
-        for(Enemy enemy :  enemies){
-            enemy.move();
+        for(Enemy enemy :  posamine){
+            enemy.update(player); //
         }
     }
 }

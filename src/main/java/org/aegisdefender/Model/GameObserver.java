@@ -5,6 +5,6 @@ import org.aegisdefender.Model.Projectiles.Projectile;
 import java.util.List;
 
 public interface GameObserver {
-    void updatePlayerPosition(int x , int y);
+    void updatePlayer(int x , int y, int width, int height);
     void updateProjectiles(List<Projectile> projectiles);
 }

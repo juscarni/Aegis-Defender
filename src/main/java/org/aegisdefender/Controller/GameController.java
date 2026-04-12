@@ -1,7 +1,6 @@
 package org.aegisdefender.Controller;
 
 import org.aegisdefender.Config.GameConfig;
-import org.aegisdefender.Config.UIConfig;
 
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.GameModel;
@@ -13,6 +12,7 @@ import org.aegisdefender.View.GameFrame;
 
 import javax.swing.*;
 import java.awt.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -51,7 +51,7 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
     public void mousePressed(MouseEvent e) {
         switch (e.getButton()) {
             case MouseEvent.BUTTON1 -> {
-               this.gameModel.setPlayerProjectile(UIConfig.TILES, GameConfig.LASER_OFFSET_PLAYERX, GameConfig.LASER_OFFSET_PLAYERY);
+               this.gameModel.spawnPlayerProjectile(); // create a projectile
             }
             case MouseEvent.BUTTON2 -> {
                // to-do
@@ -79,23 +79,23 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
     public void actionPerformed(ActionEvent e) {
         this.gameModel.updateProjectiles();
 
-        updateEnemies(this.gameModel.getEnemies());
-        this.gameModel.updateEnemy(); //
+        updateEnemies(this.gameModel.getPosamine());
+        this.gameModel.updateEnemy();
     }
 
     @Override
-    public void updatePlayerPosition(int x, int y) {
-        gameFrame.getGamePanel().updatePlayerPosition(x,y);
+    public void updatePlayer(int x, int y,int width, int height) {
+        gameFrame.getGamePanel().updatePlayerPosition(x,y,width,height); // problem....
     }
 
-    @Override
     // use of Data-transfert-Object (DTO)
+    @Override
     public void updateProjectiles(List<Projectile> projectiles) {
         List<EntityRenderData> data = new ArrayList<>();
         for(Projectile projectile : projectiles){
             data.add(new EntityRenderData(
-                 projectile.getPositionLaserX(),
-                 projectile.getPositionLaserY(),
+                 projectile.getLaserX(),
+                 projectile.getLaserY(),
                  projectile.getLaserWidth(),
                  projectile.getLaserHeight(),
                  projectile.getHitBox()   // --- just for the debug
@@ -104,6 +104,7 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
         gameFrame.getGamePanel().updatePlayerProjectiles(data);
     }
 
+    // use of Data-transfert-Object (DTO)
     public void updateEnemies(List<Enemy> enemies){
         List<EntityRenderData> data = new ArrayList<>();
         for(Enemy enemy : enemies){

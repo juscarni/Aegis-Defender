@@ -13,7 +13,7 @@ public class Artiliere extends Enemy{
     }
 
     @Override
-    public void enemyBehavior() {
+    public void enemyBehavior(Player player) {
 
     }
 
@@ -28,7 +28,7 @@ public class Artiliere extends Enemy{
     }
 
     @Override
-    public void move() {
+    public void move(Player player) {
 
     }
 }

@@ -13,18 +13,22 @@ import java.util.List;
 public class GamePanel extends JPanel implements ActionListener{
 
     private int Y_SCROLL = 0;
-    private int PlayerX;
-    private int PlayerY;
+    private int playerX;
+    private int playerY;
+    private int playerWidth;
+    private int playerHeight;
 
     private Image playerImage;
     private Image backgroundImage;
     private Image playerLaser;
     private Image kamikaze;
+    private Image posamine;
 
     private Timer backgroundImageTimer;
 
     private List<EntityRenderData> playerProjectiles;
     private List<EntityRenderData> enemies;
+    private List<List<EntityRenderData>> enemie;
 
 
     public GamePanel(){
@@ -40,16 +44,25 @@ public class GamePanel extends JPanel implements ActionListener{
         this.enemies = new ArrayList<>(); ///
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Y_SCROLL += 1;
+        repaint();
+    }
+
      @Override
     public void paintComponent(Graphics g){
-        super.paintComponent(g);
-        drawBackgroundImage(g);// backgroundImageScroll
-         drawProjectiles(g);
-         drawEnemies(g);
-        drawPlayerImage(g);
-        drawPanel(g);
+         super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        drawBackgroundImage(g2);// backgroundImageScroll
+         drawProjectiles(g2);
+         drawEnemies(g2);
+        drawPlayerImage(g2);
+        drawPanel(g2);
     }
-    public void drawPanel(Graphics g){
+
+    public void drawPanel(Graphics2D g){
         g.setColor(Color.gray);
         int y = 0;
         int x = 0;
@@ -69,15 +82,15 @@ public class GamePanel extends JPanel implements ActionListener{
         }
     }
 
-    private void drawPlayerImage(Graphics g) {
+    private void drawPlayerImage(Graphics2D g) {
         g.drawImage(playerImage,
-                PlayerX - UIConfig.DRAW_OFFSET_X,
-                PlayerY - UIConfig.DRAW_OFFSET_Y,
-                UIConfig.TILES * 2,
-                UIConfig.TILES * 2, null);
+                playerX - UIConfig.DRAW_OFFSET_X,
+                playerY - UIConfig.DRAW_OFFSET_Y,
+                this.playerWidth,
+                this.playerHeight, null);
     }
 
-    private void drawBackgroundImage(Graphics g) {
+    private void drawBackgroundImage(Graphics2D g) {
         g.drawImage(backgroundImage, 0, Y_SCROLL, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT, null);
         g.drawImage(backgroundImage, 0, Y_SCROLL - UIConfig.WINDOW_HEIGHT, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT, null);
         if (Y_SCROLL >= UIConfig.WINDOW_HEIGHT) {
@@ -85,14 +98,8 @@ public class GamePanel extends JPanel implements ActionListener{
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Y_SCROLL += 1;
-        repaint();
-    }
-
-    private void drawProjectiles(Graphics g) {
-        //playerlaser
+    private void drawProjectiles(Graphics2D g) {
+        //projectile of the player draw
         g.setColor(Color.white);
        for(EntityRenderData projectile : this.playerProjectiles){
            g.drawImage(playerLaser,
@@ -102,34 +109,14 @@ public class GamePanel extends JPanel implements ActionListener{
                    projectile.height,
                    null
            );
-           // HitBox draw
-           g.setColor(Color.RED);
-           g.drawRect(projectile.hitbox.x, projectile.hitbox.y, projectile.hitbox.width, projectile.hitbox.height);
+           // projectiles HitBox draw
+           //g.setColor(Color.RED);
+           //g.drawRect(projectile.hitbox.x, projectile.hitbox.y, projectile.hitbox.width, projectile.hitbox.height);
        }
     }
 
-    public void updatePlayerPosition(int x, int y) {
-        this.PlayerX = x;
-        this.PlayerY = y;
-        repaint();
-    }
-    public void updatePlayerProjectiles(List<EntityRenderData> projectiles){
-        this.playerProjectiles = projectiles;
-        repaint();
-    }
-
-    public void loadGameImages(){
-        playerImage = new ImageIcon(getClass().getResource("/Images/AegisDefender.png")).getImage();
-        backgroundImage = new ImageIcon(getClass().getResource("/Images/2.jpg")).getImage();
-        playerLaser  = new ImageIcon(getClass().getResource("/Images/AegisDefender_Bullet.png")).getImage();
-        kamikaze = new ImageIcon(getClass().getResource("/Images/Kamikaze_idle.png")).getImage();
-    }
-    public void updateEnemies(List<EntityRenderData> enemies){
-        this.enemies = enemies;
-        repaint();
-    }
-
-    private void drawEnemies(Graphics g) {
+    private void drawEnemies(Graphics2D g) {
+        // draw Enemies
         for(EntityRenderData enemy : this.enemies){
             g.drawImage(kamikaze,
                     enemy.x,
@@ -138,9 +125,41 @@ public class GamePanel extends JPanel implements ActionListener{
                     enemy.height,
                     null
             );
-            // HitBox draw
-            g.setColor(Color.RED);
-            g.drawRect(enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height);
+            // Enemies HitBox draw
+            //g.setColor(Color.RED);
+            //g.drawRect(enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height);
         }
+    }
+
+    public void updatePlayerPosition(int x, int y, int width , int height) {
+        this.playerX = x;
+        this.playerY = y;
+        this.playerWidth = width;
+        this.playerHeight = height;
+        repaint();
+    }
+
+    public void updatePlayerProjectiles(List<EntityRenderData> projectiles){
+        this.playerProjectiles = projectiles;
+        repaint();
+    }
+
+    public void updateEnemies(List<EntityRenderData> enemies){
+        this.enemies = enemies;
+        repaint();
+    }
+
+    //---
+    public void updateEnemie(List<List<EntityRenderData>> enemies){
+        this.enemie = enemies;
+        repaint();
+    }
+
+    public void loadGameImages(){
+        playerImage = new ImageIcon(getClass().getResource("/Images/AegisDefender.png")).getImage();
+        backgroundImage = new ImageIcon(getClass().getResource("/Images/Background.png")).getImage();
+        playerLaser  = new ImageIcon(getClass().getResource("/Images/Laser_Large.png")).getImage();
+        kamikaze = new ImageIcon(getClass().getResource("/Images/Kamikaze_idle.png")).getImage();
+        posamine = new ImageIcon(getClass().getResource("/Images/Artillery_Cruiser_Idel.png")).getImage();
     }
 }

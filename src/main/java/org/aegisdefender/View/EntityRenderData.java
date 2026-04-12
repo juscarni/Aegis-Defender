@@ -1,6 +1,6 @@
 package org.aegisdefender.View;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class EntityRenderData {
 

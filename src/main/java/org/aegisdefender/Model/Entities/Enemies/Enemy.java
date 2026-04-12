@@ -2,7 +2,7 @@ package org.aegisdefender.Model.Entities.Enemies;
 
 import org.aegisdefender.Model.Entities.Player;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public abstract class Enemy {
 
@@ -14,9 +14,9 @@ public abstract class Enemy {
     protected int height;
     protected boolean isAlive = true;
 
-    public void update() {
-        move();
-        enemyBehavior();
+    public void update(Player player) {
+        move(player);
+        enemyBehavior(player);
     }
     public void takeDamage(Player player, int amount){
         this.health -= amount;
@@ -30,6 +30,8 @@ public abstract class Enemy {
     public void setY(int y) {this.y = y;}
     public int getEnemyX() {return this.x;}
     public int getEnemyY() {return this.y;}
+    public void setSpeed(int speed){this.speed = speed;}
+    public int getSpeed(){return this.speed;}
     public int getHealth() {return this.health;}
     public boolean isAlive() {return this.isAlive;}
     public int getWidth(){return this.width;}
@@ -37,8 +39,9 @@ public abstract class Enemy {
 
 
     public abstract Rectangle getHitBox();
-    public abstract void enemyBehavior();
-    public abstract void attack(Player player);
     public abstract String getType();
-    public abstract void move();
+
+    public abstract void enemyBehavior(Player player);
+    public abstract void attack(Player player);
+    public abstract void move(Player player);
 }
