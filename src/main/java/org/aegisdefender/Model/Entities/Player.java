@@ -2,6 +2,12 @@ package org.aegisdefender.Model.Entities;
 
 import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
+import org.aegisdefender.Model.Projectiles.PlayerLaser;
+import org.aegisdefender.Model.Projectiles.Projectile;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
 
@@ -14,7 +20,15 @@ public class Player {
     private boolean isAlive = true;
     private int attackPower = 25;
 
+    private Projectile projectile;
+    private List<Projectile> projectiles;
+    private long lastShotTime = 0;
+    private int DELAY = 150; //ms;
 
+
+    public Player(){
+        projectiles = new ArrayList<>();
+    }
 
     public void setX(int playerX){
         this.x= playerX;
@@ -43,5 +57,33 @@ public class Player {
     }
     public void attack(Enemy enemy){
         enemy.takeDamage(this, attackPower);
+    }
+
+    // I'll do it after
+    public Rectangle HitBox(){
+        return new Rectangle();
+    }
+
+    public void shoot(){
+        projectile = new PlayerLaser(this);
+        long now = System.currentTimeMillis();
+
+        if (now - lastShotTime > DELAY) {
+            projectiles.add(projectile);
+            lastShotTime = now;
+        }
+    }
+    public void updateProjectiles(){
+        for (int i = 0; i < projectiles.size(); i++) {
+            projectile = projectiles.get(i);
+            projectile.setLaserY(projectile.getLaserY() + projectile.getSpeed());
+            if (projectile.getLaserY() < - 50) {
+                projectiles.remove(i);
+                i--;
+            }
+        }
+    }
+    public List<Projectile> playerProjectiles(){
+        return this.projectiles;
     }
 }

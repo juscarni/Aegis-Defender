@@ -26,10 +26,9 @@ public class GamePanel extends JPanel implements ActionListener{
 
     private Timer backgroundImageTimer;
 
-    private List<EntityRenderData> playerProjectiles;
-    private List<EntityRenderData> enemies;
-    private List<List<EntityRenderData>> enemie;
-
+    private List<ProjectileRenderData> playerProjectiles;
+    private List<ProjectileRenderData> enemyProjectiles;
+    private List<EnemyRenderData> enemies;
 
     public GamePanel(){
         this.setBackground(Color.black);
@@ -42,6 +41,7 @@ public class GamePanel extends JPanel implements ActionListener{
 
         this.playerProjectiles = new ArrayList<>();
         this.enemies = new ArrayList<>(); ///
+        this.enemyProjectiles = new ArrayList<>();
     }
 
     @Override
@@ -58,6 +58,7 @@ public class GamePanel extends JPanel implements ActionListener{
         drawBackgroundImage(g2);// backgroundImageScroll
          drawProjectiles(g2);
          drawEnemies(g2);
+         drawEnemiesProjectiles(g2);
         drawPlayerImage(g2);
         drawPanel(g2);
     }
@@ -101,33 +102,50 @@ public class GamePanel extends JPanel implements ActionListener{
     private void drawProjectiles(Graphics2D g) {
         //projectile of the player draw
         g.setColor(Color.white);
-       for(EntityRenderData projectile : this.playerProjectiles){
+       for(ProjectileRenderData projectile : this.playerProjectiles){
            g.drawImage(playerLaser,
-                   projectile.x,
-                   projectile.y,
-                   projectile.width,
-                   projectile.height,
+                   projectile.x(),
+                   projectile.y(),
+                   projectile.width(),
+                   projectile.height(),
                    null
            );
            // projectiles HitBox draw
-           //g.setColor(Color.RED);
-           //g.drawRect(projectile.hitbox.x, projectile.hitbox.y, projectile.hitbox.width, projectile.hitbox.height);
+           g.setColor(Color.RED);
+           g.drawRect(projectile.hitbox().x, projectile.hitbox().y, projectile.hitbox().width, projectile.hitbox().height);
        }
     }
 
     private void drawEnemies(Graphics2D g) {
         // draw Enemies
-        for(EntityRenderData enemy : this.enemies){
-            g.drawImage(kamikaze,
-                    enemy.x,
-                    enemy.y,
-                    enemy.width,
-                    enemy.height,
-                    null
-            );
-            // Enemies HitBox draw
-            //g.setColor(Color.RED);
-            //g.drawRect(enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height);
+        for(EnemyRenderData enemy : this.enemies){
+            switch(enemy.type()){
+                case "KAMIKAZE" ->  {
+                    g.drawImage(kamikaze, enemy.x(), enemy.y(), enemy.width(), enemy.height(), null);
+                    // Enemies HitBox draw
+                    g.setColor(Color.RED);
+                    g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
+                }
+                case "POSAMINE" -> {
+                    g.drawImage(posamine, enemy.x(), enemy.y(), enemy.width(), enemy.height(),null);
+                    // Enemies HitBox draw
+                    g.setColor(Color.RED);
+                    g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
+                }
+            }
+        }
+    }
+    private void drawEnemiesProjectiles(Graphics2D g){
+        for(ProjectileRenderData projectile : this.enemyProjectiles){
+            switch (projectile.type()){
+                case "POSAMINE" -> {
+                   // g.drawImage(playerLaser, projectile.x(), projectile.y(), projectile.width(),projectile.height(),null);
+                   // hitbox will be put here later
+                }
+                case "BERSEKER" -> {
+                    // ---
+                }
+            }
         }
     }
 
@@ -139,19 +157,17 @@ public class GamePanel extends JPanel implements ActionListener{
         repaint();
     }
 
-    public void updatePlayerProjectiles(List<EntityRenderData> projectiles){
+    public void updatePlayerProjectilesOnScreen(List<ProjectileRenderData> projectiles){
         this.playerProjectiles = projectiles;
         repaint();
     }
 
-    public void updateEnemies(List<EntityRenderData> enemies){
+    public void updateEnemiesOnScreen(List<EnemyRenderData> enemies){
         this.enemies = enemies;
         repaint();
     }
-
-    //---
-    public void updateEnemie(List<List<EntityRenderData>> enemies){
-        this.enemie = enemies;
+    public void updateEnemiesProjectileOnScreen(List<ProjectileRenderData> projectiles){
+        this.enemyProjectiles = projectiles;
         repaint();
     }
 

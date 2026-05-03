@@ -9,15 +9,15 @@ import java.awt.Rectangle;
 public class PlayerLaser  extends Projectile{
 
     public PlayerLaser(Player player){
-        this.x = player.getX() + GameConfig.LASER_OFFSET_PLAYERX;
-        this.y = player.getY() +  GameConfig.LASER_OFFSET_PLAYERY;
-        this.width = UIConfig.TILES/4;
-        this.height = UIConfig.TILES/2;
-        this.speed = - 25;
+        this.projectileX= player.getX() + GameConfig.LASER_OFFSET_PLAYERX;
+        this.projectileY = player.getY() +  GameConfig.LASER_OFFSET_PLAYERY;
+        this.projectileWidth= UIConfig.TILES/4;
+        this.projectileHeight = UIConfig.TILES/2;
+        this.projectileSpeed = - 25;
     }
 
     @Override
-    public Rectangle getHitBox() {
+    public Rectangle getProjectileHitBox() {
         return new Rectangle(
                 getLaserX() + 3,
                 getLaserY() + 2,

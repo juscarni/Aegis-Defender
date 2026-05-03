@@ -1,8 +1,10 @@
 package org.aegisdefender.Model.Entities.Enemies;
 
 import org.aegisdefender.Model.Entities.Player;
+import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.Rectangle;
+import java.awt.*;
+import java.util.List;
 
 public abstract class Enemy {
 
@@ -41,7 +43,12 @@ public abstract class Enemy {
     public abstract Rectangle getHitBox();
     public abstract String getType();
 
+    // every single enemy has a particular behavior
     public abstract void enemyBehavior(Player player);
     public abstract void attack(Player player);
     public abstract void move(Player player);
+    public abstract Projectile shoot();
+    public abstract void updateEnemyProjectiles();
+    public abstract List<Projectile> getProjectiles();
+    public abstract Rectangle getProjectileHitBox();
 }

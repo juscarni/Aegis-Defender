@@ -1,8 +1,10 @@
 package org.aegisdefender.Model.Entities.Enemies;
 
 import org.aegisdefender.Model.Entities.Player;
+import org.aegisdefender.Model.Projectiles.Projectile;
 
 import java.awt.*;
+import java.util.List;
 
 public class Boss extends Enemy{
 
@@ -30,4 +32,25 @@ public class Boss extends Enemy{
     public void move(Player player) {
 
     }
+
+    @Override
+    public Projectile shoot() {
+        return null;
+    }
+
+    @Override
+    public void updateEnemyProjectiles() {
+
+    }
+
+    @Override
+    public List<Projectile> getProjectiles() {
+        return List.of();
+    }
+
+    @Override
+    public Rectangle getProjectileHitBox() {
+        return null;
+    }
+
 }

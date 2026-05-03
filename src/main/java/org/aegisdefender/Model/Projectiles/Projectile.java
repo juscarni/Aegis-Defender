@@ -3,30 +3,31 @@ package org.aegisdefender.Model.Projectiles;
 import java.awt.Rectangle;
 
 public abstract class Projectile {
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
-    protected int speed;
+    protected int projectileX;
+    protected int projectileY;
+    protected int projectileWidth;
+    protected int projectileHeight;
+    protected int projectileSpeed;
+    protected String type;
 
     public int getLaserX(){
-            return this.x;
+            return this.projectileX;
     }
     public int getLaserY(){
-        return this.y;
+        return this.projectileY;
     }
-
     public int getLaserWidth(){
-        return this.width;
+        return this.projectileWidth;
     }
-    public int getLaserHeight(){
-        return this.height;
-    }
+    public int getLaserHeight(){return this.projectileHeight;}
 
     public void setLaserY(int y){
-        this.y = y;
+        this.projectileY = y;
     }
-    public int  getSpeed(){return this.speed;}
+    public int  getSpeed(){return this.projectileSpeed;}
 
-    public abstract Rectangle getHitBox();
+    public abstract Rectangle getProjectileHitBox();
+    public String getType(){
+        return type;
+    }
 }

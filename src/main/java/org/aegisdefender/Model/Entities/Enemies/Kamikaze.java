@@ -2,13 +2,15 @@ package org.aegisdefender.Model.Entities.Enemies;
 
 import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.Entities.Player;
+import org.aegisdefender.Model.Projectiles.Projectile;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Random;
 
 public class Kamikaze extends Enemy{
 
-    private int attackPower = 30;
+    private final int attackPower = 30;
     private static final Random rand = new Random();
 
     // === Variables pour les patterns ===
@@ -18,7 +20,6 @@ public class Kamikaze extends Enemy{
     private int startX = 0;
     private double curveStrength = 1.0;
     private int homingStrength = 3; // force du suivi du joueur (plus c'est bas, plus c'est précis)
-
 
     public Kamikaze(){
         this.x = 100;
@@ -31,6 +32,7 @@ public class Kamikaze extends Enemy{
         // Par défaut on donne un pattern aléatoire (tu pourras le changer depuis le WaveManager)
         this.patternType = rand.nextInt(5);
         this.amplitude = 60 + rand.nextInt(60); // entre 60 et 120 pixels d'oscillation
+
     }
     // Méthode simple pour choisir le pattern
     public void setPattern(int pattern) {
@@ -112,17 +114,39 @@ public class Kamikaze extends Enemy{
 
     }
 
+
     @Override
     public Rectangle getHitBox() {
         return new Rectangle(
-                this.x + 2 ,
-                this.y + 2,
-                this.width - 4,
-                this.height - 4);
+                this.x + UIConfig.TILES,
+                this.y + UIConfig.TILES ,
+                this.width - UIConfig.TILES*2,
+                this.height - UIConfig.TILES*2);
     }
-
     @Override
     public String getType(){
         return EnemyFactory.EnemyType.KAMIKAZE.name();
     }
+     @Override
+    public boolean isAlive(){
+        return (this.y < UIConfig.WINDOW_HEIGHT + UIConfig.TILES*2);
+     }
+
+     /*********************
+     * Specific methods
+     * *********************/
+
+    @Override
+    public Projectile shoot() {
+        return null;
+    }
+    @Override
+    public void updateEnemyProjectiles() {}
+    @Override
+    public List<Projectile> getProjectiles() {
+        return List.of();
+    }
+    @Override
+    public Rectangle getProjectileHitBox() {return null;}
+
 }

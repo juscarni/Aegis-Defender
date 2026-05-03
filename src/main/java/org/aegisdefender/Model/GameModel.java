@@ -1,10 +1,9 @@
 package org.aegisdefender.Model;
 
+import org.aegisdefender.Model.Core.WaveManager;
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
-import org.aegisdefender.Model.Entities.Enemies.EnemyFactory;
+import org.aegisdefender.Model.Entities.Enemies.Posamine;
 import org.aegisdefender.Model.Entities.Player;
-
-import org.aegisdefender.Model.Projectiles.PlayerLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
 import java.util.ArrayList;
@@ -12,30 +11,22 @@ import java.util.List;
 
 public class GameModel{
     private Player player;
-    private Projectile projectile;
-
-    private List<Projectile> projectiles;
+    private WaveManager waveManager;
     private List<GameObserver> observer;
+    private List<List<Projectile>>  enemyProjectiles;
 
-    private List<Enemy>  kamikaze;
-    private List<Enemy> posamine;
-    private List<List<Enemy>> enemies;
+    private Posamine posamine;
 
     //------------//
     public GameModel(){
         player = new Player();
-        projectiles  = new ArrayList<>();
-
-        EnemyFactory enemyFactory = new EnemyFactory();
-        kamikaze = enemyFactory.createEnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,6,3);
-        posamine = enemyFactory.createEnemyGroup(EnemyFactory.EnemyType.POSAMINE , 3 ,2); // le pattern ne sera pas utilisé
-
-        //enemies list of list
-        enemies = new ArrayList<>();
-        enemies.add(kamikaze);
-        enemies.add(posamine);
-
+        waveManager = new WaveManager();
+        // observer list
         observer = new ArrayList<>();
+        enemyProjectiles = new ArrayList<>();
+
+        //Enemies
+        posamine = new Posamine();
     }
 
     public void addObserver(GameObserver ob){
@@ -48,10 +39,13 @@ public class GameModel{
     public void notifyObserver(){
         for(GameObserver ob: observer){
             ob.updatePlayer(player.getX(),player.getY(),player.getPlayerWidth(),player.getPlayerHeight());
-            ob.updateProjectiles(new ArrayList<>(projectiles));
+            ob.updateProjectiles(new ArrayList<>(player.playerProjectiles()));
         }
     }
 
+    /****************************************************************************************************************
+     ********************************************** PLAYER DATA *****************************************************
+     ****************************************************************************************************************/
     public void setPLayerX(int x){
         player.setX(x);
         notifyObserver();
@@ -67,32 +61,34 @@ public class GameModel{
     public void init(){notifyObserver();}
 
     public void spawnPlayerProjectile(){
-       projectile = new PlayerLaser(player);
-       projectiles.add(projectile);
+        player.shoot();
     }
 
-    // logic to move the playerlaser
     public void updateProjectiles() {
-        for (int i = 0; i < projectiles.size(); i++) {
-            projectile = projectiles.get(i);
-            projectile.setLaserY(projectile.getLaserY() + projectile.getSpeed());
-            if (projectile.getLaserY() < - 50) {
-                projectiles.remove(i);
-                i--;
-            }
-        }
+        player.updateProjectiles();
         notifyObserver();
     }
-
-    public List<Enemy> getKamikaze(){
-        return new ArrayList<>(kamikaze);
-    }
-    public List<Enemy> getPosamine(){return  new ArrayList<>(posamine);}
-
-
+    /****************************************************************************************************************
+     *********************************************** ENEMY DATA *****************************************************
+     ****************************************************************************************************************/
     public void updateEnemy(){
-        for(Enemy enemy :  posamine){
-            enemy.update(player); //
+        for(Enemy enemy : waveManager.getActiveEnemies()){
+            enemy.update(player);
         }
+        long currentTime = System.currentTimeMillis();
+        waveManager.update(currentTime);
+    }
+
+    public List<Enemy> getActiveEnemies(){
+        return waveManager.getActiveEnemies();
+    }
+
+    public void updateEnemyProjectiles(){
+        posamine.updateEnemyProjectiles();
+        enemyProjectiles.add(posamine.getProjectiles());
+    }
+
+    public List<List<Projectile>> getEnemyProjectiles(){
+        return this.enemyProjectiles;
     }
 }
