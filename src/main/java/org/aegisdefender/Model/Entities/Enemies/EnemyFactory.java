@@ -47,7 +47,8 @@ public class EnemyFactory {
 
                 group.add(k);
             }
-        } else if(type == EnemyType.POSAMINE){
+        }
+        else if(type == EnemyType.POSAMINE){
             int startX = UIConfig.TILES;
             int spacing = UIConfig.TILES*3;
 
@@ -58,6 +59,26 @@ public class EnemyFactory {
                 p.setSpeed(p.getSpeed());
                 p.setStartX(startX + (spacing * i));
                 group.add(p);
+            }
+        }
+        else if(type == EnemyType.ARTILIERE) {
+            int margin = UIConfig.TILES;
+            int usableWidth = UIConfig.WINDOW_WIDTH - (2 * margin);
+            int spacing = (count <= 1) ? 0 : (usableWidth / (count - 1));
+            //int spacing = UIConfig.TILES*3;
+
+            for (int i = 0; i < count; i++) {
+                Artiliere a = (Artiliere) createEnemy(type);
+
+                int x = margin + (spacing * i);
+                int y = -UIConfig.TILES * 4 - (i * UIConfig.TILES * 2); // spawn “a scalini” fuori schermo
+
+                a.setX(x);
+                a.setY(y);
+
+                a.setSpeed(2);
+
+                group.add(a);
             }
         }
         return group;

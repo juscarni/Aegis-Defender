@@ -18,8 +18,8 @@ public class Kamikaze extends Enemy{
     private double angle = 0.0;
     private double amplitude = 0.0;
     private int startX = 0;
-    private double curveStrength = 1.0;
     private int homingStrength = 3; // force du suivi du joueur (plus c'est bas, plus c'est précis)
+
 
     public Kamikaze(){
         this.x = 100;
@@ -29,6 +29,11 @@ public class Kamikaze extends Enemy{
         this.width = UIConfig.TILES*3;
         this.height = UIConfig.TILES*3;
 
+        this.healthBarWidth = 30;
+        this.healthBarHeight = 4;
+        this.maxHealth = 100;
+        this.HEALTH_BAR_OFFSET_X = 45;
+        this.HEALTH_BAR_OFFSET_Y = 60;
         // Par défaut on donne un pattern aléatoire (tu pourras le changer depuis le WaveManager)
         this.patternType = rand.nextInt(5);
         this.amplitude = 60 + rand.nextInt(60); // entre 60 et 120 pixels d'oscillation
@@ -123,6 +128,7 @@ public class Kamikaze extends Enemy{
                 this.width - UIConfig.TILES*2,
                 this.height - UIConfig.TILES*2);
     }
+
     @Override
     public String getType(){
         return EnemyFactory.EnemyType.KAMIKAZE.name();
@@ -132,10 +138,12 @@ public class Kamikaze extends Enemy{
         return (this.y < UIConfig.WINDOW_HEIGHT + UIConfig.TILES*2);
      }
 
+
+
+
      /*********************
      * Specific methods
      * *********************/
-
     @Override
     public Projectile shoot() {
         return null;
@@ -146,7 +154,20 @@ public class Kamikaze extends Enemy{
     public List<Projectile> getProjectiles() {
         return List.of();
     }
+
     @Override
-    public Rectangle getProjectileHitBox() {return null;}
+    public Rectangle getProjectileHitBox() {
+        return null;
+    }
+
+    @Override
+    public Point getProjectileSpawnPoint() {
+        return null;
+    }
+
+    @Override
+    public Dimension getProjectileSize() {
+        return null;
+    }
 
 }

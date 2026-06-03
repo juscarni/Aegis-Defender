@@ -13,21 +13,23 @@ import java.util.List;
 public class GamePanel extends JPanel implements ActionListener{
 
     private int Y_SCROLL = 0;
-    private int playerX;
-    private int playerY;
-    private int playerWidth;
-    private int playerHeight;
+    private PlayerRenderData playerRenderData;
 
     private Image playerImage;
     private Image backgroundImage;
-    private Image playerLaser;
+
     private Image kamikaze;
     private Image posamine;
+    private Image artiliere;
+
+    private Image posamine_projectile;
+    private Image artiliere_projectile;
+    private Image playerLaser;
 
     private Timer backgroundImageTimer;
 
     private List<ProjectileRenderData> playerProjectiles;
-    private List<ProjectileRenderData> enemyProjectiles;
+    private List<List<ProjectileRenderData>> enemyProjectiles;
     private List<EnemyRenderData> enemies;
 
     public GamePanel(){
@@ -85,10 +87,28 @@ public class GamePanel extends JPanel implements ActionListener{
 
     private void drawPlayerImage(Graphics2D g) {
         g.drawImage(playerImage,
-                playerX - UIConfig.DRAW_OFFSET_X,
-                playerY - UIConfig.DRAW_OFFSET_Y,
-                this.playerWidth,
-                this.playerHeight, null);
+                this.playerRenderData.x() - UIConfig.DRAW_OFFSET_X,
+                this.playerRenderData.y() - UIConfig.DRAW_OFFSET_Y,
+                this.playerRenderData.width(),
+                this.playerRenderData.height(), null);
+
+        // player hitbox
+        g.setColor(Color.red);
+        g.drawRect(
+                this.playerRenderData.hitbox().x,
+                this.playerRenderData.hitbox().y,
+                this.playerRenderData.hitbox().width,
+                this.playerRenderData.hitbox().height
+        );
+
+        //player healthBar on the screen
+        drawHealthBar(g,
+                this.playerRenderData.healthBar().x,
+                this.playerRenderData.healthBar().y,
+                this.playerRenderData.healthBar().width,
+                this.playerRenderData.healthBar().height,
+                this.playerRenderData.currentHealth()
+        );
     }
 
     private void drawBackgroundImage(Graphics2D g) {
@@ -117,65 +137,110 @@ public class GamePanel extends JPanel implements ActionListener{
     }
 
     private void drawEnemies(Graphics2D g) {
-        // draw Enemies
         for(EnemyRenderData enemy : this.enemies){
+            Image enemyImage = null;
             switch(enemy.type()){
                 case "KAMIKAZE" ->  {
-                    g.drawImage(kamikaze, enemy.x(), enemy.y(), enemy.width(), enemy.height(), null);
-                    // Enemies HitBox draw
-                    g.setColor(Color.RED);
-                    g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
+                    enemyImage = kamikaze;
                 }
                 case "POSAMINE" -> {
-                    g.drawImage(posamine, enemy.x(), enemy.y(), enemy.width(), enemy.height(),null);
-                    // Enemies HitBox draw
-                    g.setColor(Color.RED);
-                    g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
+                    enemyImage = posamine;
+                }
+                case "ARTILIERE" -> {
+                    enemyImage = artiliere;
                 }
             }
+            // draw enemy on the screen
+            g.drawImage(enemyImage, enemy.x(), enemy.y(), enemy.width(),enemy.height(),null);
+            // draw enemy hitbox
+            g.setColor(Color.RED);
+            g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
+            // draw enemy healthBar
+            drawHealthBar(
+                    g,
+                    enemy.healthBar().x,
+                    enemy.healthBar().y,
+                    enemy.healthBar().width,
+                    enemy.healthBar().height,
+                    enemy.currentHealth()); //------
         }
     }
     private void drawEnemiesProjectiles(Graphics2D g){
-        for(ProjectileRenderData projectile : this.enemyProjectiles){
-            switch (projectile.type()){
-                case "POSAMINE" -> {
-                   // g.drawImage(playerLaser, projectile.x(), projectile.y(), projectile.width(),projectile.height(),null);
-                   // hitbox will be put here later
+        for(List<ProjectileRenderData> projectile : this.enemyProjectiles) {
+            Image enemyProjectile = null;
+            for(ProjectileRenderData p : projectile){
+                String type = p.type();
+                if(type == null){
+                    continue;
                 }
-                case "BERSEKER" -> {
-                    // ---
+                switch (p.type().toUpperCase()){
+                    case "KAMIKAZE" -> {
+                       continue; // because a kamikaze doesn't have projectiles
+                    }
+                    case "POSAMINE" -> {
+                        enemyProjectile = this.posamine_projectile;
+                    }
+                    case "ARTILIERE" -> {
+                        enemyProjectile = this.artiliere_projectile;
+                    }
                 }
+                // draw artiliere
+                g.drawImage(enemyProjectile, p.x(), p.y(), p.width(), p.height(),null);
+                // draw artiliere hitbox
+                g.setColor(Color.red);
+                g.drawRect(p.hitbox().x, p.hitbox().y, p.hitbox().width, p.hitbox().height);
             }
         }
     }
 
-    public void updatePlayerPosition(int x, int y, int width , int height) {
-        this.playerX = x;
-        this.playerY = y;
-        this.playerWidth = width;
-        this.playerHeight = height;
+    public void updatePlayerPosition(PlayerRenderData playerData) {
+        this.playerRenderData = playerData;
         repaint();
     }
 
+    // Player on the screen
     public void updatePlayerProjectilesOnScreen(List<ProjectileRenderData> projectiles){
         this.playerProjectiles = projectiles;
         repaint();
     }
-
+    // Enemies on the screen
     public void updateEnemiesOnScreen(List<EnemyRenderData> enemies){
         this.enemies = enemies;
         repaint();
     }
-    public void updateEnemiesProjectileOnScreen(List<ProjectileRenderData> projectiles){
+    // Enemies projectiles
+    public void updateEnemiesProjectileOnScreen(List<List<ProjectileRenderData>> projectiles){
         this.enemyProjectiles = projectiles;
         repaint();
     }
 
     public void loadGameImages(){
+        //
         playerImage = new ImageIcon(getClass().getResource("/Images/AegisDefender.png")).getImage();
         backgroundImage = new ImageIcon(getClass().getResource("/Images/Background.png")).getImage();
+
+        // Player and enemies projectiles
         playerLaser  = new ImageIcon(getClass().getResource("/Images/Laser_Large.png")).getImage();
+        posamine_projectile = new ImageIcon(getClass().getResource("/Images/posamine_laser.png")).getImage();
+        artiliere_projectile = new ImageIcon(getClass().getResource("/Images/artiliere_projectile.png")).getImage(); // --
+
+        // Enemies
         kamikaze = new ImageIcon(getClass().getResource("/Images/Kamikaze_idle.png")).getImage();
         posamine = new ImageIcon(getClass().getResource("/Images/Artillery_Cruiser_Idel.png")).getImage();
+        artiliere = new ImageIcon(getClass().getResource("/Images/Artillery_Cruiser_Idel (1).png")).getImage(); //
+    }
+
+
+    public void drawHealthBar(Graphics g, int x, int y, int width, int height, int currentHealth){
+        g.setColor(Color.RED);
+        g.fillRect(x, y, width, height);
+
+        // current health
+        g.setColor(Color.GREEN);
+        g.fillRect(x,y ,currentHealth, height);
+
+        //current health border
+        g.setColor(Color.black);
+        g.drawRect(x, y, width, height);
     }
 }

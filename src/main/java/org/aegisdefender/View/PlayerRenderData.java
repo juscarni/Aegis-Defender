@@ -1,4 +1,5 @@
 package org.aegisdefender.View;
 
-public class PlayerRenderData {
-}
+import java.awt.*;
+
+public record PlayerRenderData(int x, int y, int width, int height, Rectangle hitbox, Rectangle healthBar, int currentHealth){};

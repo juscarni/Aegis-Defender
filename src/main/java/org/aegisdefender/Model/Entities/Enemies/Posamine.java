@@ -5,42 +5,55 @@ import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.EnemyLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.*;
 
 public class Posamine extends Enemy{
 
-    private int attackPower = 30;
-
+    private final int attackPower = 30;
     private long currentTime = 0;
     private long lastShootTime = 0;
-    private final int DELAY = 500; //ms
+
+    private final int DELAY = 1000; //ms
+    private final int SPAWN_POINT_OFFSET_X = 70;
+    private final int SPAWN_POINT_OFFSET_Y = UIConfig.TILES*2;
+    private final int PROJECTILE_WIDTH = UIConfig.TILES/2;
+    private final int PROJECTILE_HEIGHT = UIConfig.TILES/2;
 
     private int startX;                // position X de référence pour le zigzag
     private Projectile projectile;
     private List<Projectile> projectiles;
+    private EnemyLaser enemyLaser;
 
 
     private enum Phase { DESCENDING, STABILIZING, ASCENDING }
     private Phase phase = Phase.DESCENDING;
     private int stabilizeTimer = 0;
-    private static final int STABILIZE_DURATION = 60; // frames de stabilisation
+    private static final int STABILIZE_DURATION = 120; // frames de stabilisation
+
 
     public Posamine(){
         this.x = -5;
         this.y = -10;
-        this.speed = 10;
+        this.speed = 1;
         this.health = 100;
         this.width = UIConfig.TILES*4;
         this.height = UIConfig.TILES*4;
+
+        this.healthBarWidth = 80;
+        this.healthBarHeight = 6;
+        this.maxHealth = 100;
+        this.HEALTH_BAR_OFFSET_X = 40;
+        this.HEALTH_BAR_OFFSET_Y = 80;
+
         projectiles = new ArrayList<>();
     }
 
     @Override
     public Rectangle getHitBox() {
         return new Rectangle(
-                x +UIConfig.TILES+10,
+                x + UIConfig.TILES+10,
                 y + UIConfig.TILES+20,
                 width - UIConfig.TILES*2-16,
                 height - UIConfig.TILES*3+5);
@@ -95,50 +108,82 @@ public class Posamine extends Enemy{
 
     @Override
     public Projectile shoot() {
-        return new EnemyLaser(
-          this.x,
-          this.y,
-          this.width,
-          this.height,
-                "POSAMINE"
-        );
+        enemyLaser = new EnemyLaser(this);
+        return enemyLaser;
     }
 
     @Override
     public void updateEnemyProjectiles() {
-        currentTime = System.currentTimeMillis();
-        if(currentTime - lastShootTime > DELAY){
-            projectile = shoot();
-            projectiles.add(projectile);
-            lastShootTime = currentTime;
-        }
+        // 1) Aggiorna SEMPRE i proiettili già esistenti (così non restano “congelati”)
         for(int i = 0; i < projectiles.size(); i++){
-            projectile = projectiles.get(i);
-            projectile.setLaserY(this.y + this.speed);
+            Projectile p = projectiles.get(i);
+            p.setLaserY(p.getLaserY() + 7);
 
-            if(projectile.getLaserY() > UIConfig.WINDOW_HEIGHT + UIConfig.TILES){
+            if(p.getLaserY() > UIConfig.WINDOW_HEIGHT + UIConfig.TILES){
                 projectiles.remove(i);
                 i--;
             }
         }
+
+        // 2) Se il nemico è fuori scena/morto, NON spawna nuovi proiettili
+        if (!isAlive()) {
+            return;
+        }
+
+        // (opzionale) spara solo quando è entrato nello schermo
+        if (this.y + UIConfig.TILES*2 < 0) {
+            return;
+        }
+
+        // 3) Spawn a cadenza
+        currentTime = System.currentTimeMillis();
+        if(currentTime - lastShootTime > DELAY){
+            projectiles.add(shoot());
+            lastShootTime = currentTime;
+        }
     }
+
 
     @Override
     public List<Projectile> getProjectiles() {
-        return this.projectiles;
+        return new ArrayList<>(this.projectiles);
     }
 
     @Override
     public Rectangle getProjectileHitBox() {
-        return new Rectangle(
-                this.x,
-                this.y,
-                this.width,
-                this.height
-        );
+      return enemyLaser.getProjectileHitBox(); //---
+    }
+
+
+    @Override
+    public Point getProjectileSpawnPoint() {
+        return new Point(this.x + SPAWN_POINT_OFFSET_X, this.y + SPAWN_POINT_OFFSET_Y);
+    }
+
+    @Override
+    public Dimension getProjectileSize() {
+        return new Dimension(PROJECTILE_WIDTH, PROJECTILE_HEIGHT);
     }
 
     public void setStartX(int startX) {
         this.startX = startX;
     }
+
+    @Override
+    public boolean isAlive(){
+        int margin = UIConfig.TILES;
+
+        boolean tooLow = this.y > UIConfig.WINDOW_HEIGHT + this.height + margin;
+        boolean tooHigh = (this.y + this.height) < -margin;
+
+        boolean outOfScreen = tooLow || tooHigh;
+
+        // Se è fuori schermo ma ha ancora proiettili attivi, resta “vivo”
+        // solo per permettere l’update dei proiettili (ma non ne spawnerà di nuovi).
+        if (outOfScreen) {
+            return !projectiles.isEmpty();
+        }
+        return true;
+    }
+
 }

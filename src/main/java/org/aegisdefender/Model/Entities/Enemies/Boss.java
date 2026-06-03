@@ -53,4 +53,14 @@ public class Boss extends Enemy{
         return null;
     }
 
+    @Override
+    public Point getProjectileSpawnPoint() {
+        return null;
+    }
+
+    @Override
+    public Dimension getProjectileSize() {
+        return null;
+    }
+
 }

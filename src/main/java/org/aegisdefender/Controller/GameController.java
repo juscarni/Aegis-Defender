@@ -1,12 +1,15 @@
 package org.aegisdefender.Controller;
 
 import org.aegisdefender.Config.GameConfig;
+
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.GameModel;
 import org.aegisdefender.Model.GameObserver;
 import org.aegisdefender.Model.Projectiles.Projectile;
+
 import org.aegisdefender.View.EnemyRenderData;
 import org.aegisdefender.View.GameFrame;
+import org.aegisdefender.View.PlayerRenderData;
 import org.aegisdefender.View.ProjectileRenderData;
 
 import javax.swing.*;
@@ -82,6 +85,7 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
         // I have to see this ambiguity later
         this.gameModel.spawnPlayerProjectile(); // create a projectile
         this.gameModel.updateEnemyProjectiles();
+
         updateEnemyProjectiles(this.gameModel.getEnemyProjectiles());
     }
 
@@ -90,8 +94,17 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
      #******************************************************************************************************************/
 
     @Override
-    public void updatePlayer(int x, int y,int width, int height) {
-        gameFrame.getGamePanel().updatePlayerPosition(x,y,width,height); // problem....
+    public void updatePlayer(int x, int y, int width, int height) {
+        PlayerRenderData playerRenderData = new PlayerRenderData(
+                x,
+                y,
+                width,
+                height,
+                gameModel.playerHitBox(),
+                gameModel.getHealthBar(),
+                gameModel.getPlayerCurrentHealth()
+        );
+        gameFrame.getGamePanel().updatePlayerPosition(playerRenderData); // problem....
     }
 
     @Override
@@ -124,17 +137,21 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
                     enemy.getWidth(),
                     enemy.getHeight(),
                     enemy.getHitBox(),  // --- just for the debug
-                    enemy.getType()
+                    enemy.getType(),
+                    enemy.getHealthBar(),
+                    enemy.getCurrentHealthBar()
             ));
         }
         this.gameFrame.getGamePanel().updateEnemiesOnScreen(data);
     }
 
     public void updateEnemyProjectiles(List<List<Projectile>> projectiles){
-        List<ProjectileRenderData> data = new ArrayList<>();
-        for(List<Projectile> projectile : projectiles){
-            for(Projectile p : projectile){
-                data.add(new ProjectileRenderData(
+        List<List<ProjectileRenderData>> data = new ArrayList<>(projectiles.size());
+
+        for (List<Projectile> EnemyProjectiles : projectiles) {
+            List<ProjectileRenderData> d = new ArrayList<>(EnemyProjectiles.size());
+            for (Projectile p : EnemyProjectiles) {
+                d.add(new ProjectileRenderData(
                         p.getLaserX(),
                         p.getLaserY(),
                         p.getLaserWidth(),
@@ -143,6 +160,7 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
                         p.getType()
                 ));
             }
+            data.add(d);
         }
         this.gameFrame.getGamePanel().updateEnemiesProjectileOnScreen(data);
     }

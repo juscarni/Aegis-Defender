@@ -9,9 +9,9 @@ import java.awt.Rectangle;
 public class PlayerLaser  extends Projectile{
 
     public PlayerLaser(Player player){
-        this.projectileX= player.getX() + GameConfig.LASER_OFFSET_PLAYERX;
+        this.projectileX = player.getX() + GameConfig.LASER_OFFSET_PLAYERX;
         this.projectileY = player.getY() +  GameConfig.LASER_OFFSET_PLAYERY;
-        this.projectileWidth= UIConfig.TILES/4;
+        this.projectileWidth = UIConfig.TILES/4;
         this.projectileHeight = UIConfig.TILES/2;
         this.projectileSpeed = - 25;
     }

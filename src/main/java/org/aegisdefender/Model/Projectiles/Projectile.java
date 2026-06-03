@@ -1,6 +1,6 @@
 package org.aegisdefender.Model.Projectiles;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public abstract class Projectile {
     protected int projectileX;
@@ -26,7 +26,14 @@ public abstract class Projectile {
     }
     public int  getSpeed(){return this.projectileSpeed;}
 
-    public abstract Rectangle getProjectileHitBox();
+    public Rectangle getProjectileHitBox() {
+        return new Rectangle(
+                getLaserX()+ 3,
+                getLaserY()+ 2,
+                getLaserWidth()- 2,
+                getLaserHeight()-2
+        );
+    }
     public String getType(){
         return type;
     }

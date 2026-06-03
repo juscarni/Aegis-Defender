@@ -16,7 +16,6 @@ public class WaveManager {
     private boolean waveInProgress = false;
     private long DELAY = 3000; // three seconds before spawning another wave
 
-
     public WaveManager(){
         enemyFactory = new EnemyFactory();
         activeEnemies = new ArrayList<>();
@@ -26,39 +25,49 @@ public class WaveManager {
     public void initWaves(){
         // wave 1
         List<EnemyGroup> group1 = new ArrayList<>();
-        group1.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,6,4,2.0));
+        group1.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,6,1,2.0));
         waves.add(new Wave(1,group1));
 
         // wave 2
         List<EnemyGroup> group2 = new ArrayList<>();
-        group2.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,5,1,2.0));
+        group2.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE,6,2,2.0));
         group2.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE,3,0,1.0));
         waves.add(new Wave(2, group2));
 
-        //third group....
+        //wave 3
+        List<EnemyGroup> group3 = new ArrayList<>();
+        group3.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE,3,1,2.0));
+        group3.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE,3,0,1.0));
+        waves.add(new Wave(3, group3));
     }
 
-    public void update(long deltaTime) {
+    public void update(long deltaTimeMs) {
         if (isFinished()) {
             // boss case will be put here ...
             return;
         }
 
+        timer += deltaTimeMs;
+
         // 1. Nettoyage automatique des morts
         activeEnemies.removeIf(e -> !e.isAlive());
 
-        // 2. Logique de spawn
+        // 2. Spawn solo se non c'è wave in corso e il delay è passato
         if (!waveInProgress) {
+            if (timer < DELAY) {
+                return;
+            }
             spawnCurrentWave();
             waveInProgress = true;
             timer = 0;
         }
 
-        // 3. Passage à la suite
+        // 3. Passaggio alla wave successiva solo quando tutti sono morti
         if (activeEnemies.isEmpty()) {
             waveInProgress = false;
             currentWaveIndex++;
             timer = 0;
+            System.out.print("there aren't enemies anymore"); //
         }
     }
 
@@ -72,5 +81,5 @@ public class WaveManager {
     }
 
     public List<Enemy> getActiveEnemies() { return activeEnemies; }
-    public boolean isFinished() { return currentWaveIndex >= waves.size(); }
+    public boolean isFinished() { return currentWaveIndex == waves.size(); }
 }

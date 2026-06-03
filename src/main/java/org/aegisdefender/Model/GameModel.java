@@ -2,10 +2,10 @@ package org.aegisdefender.Model;
 
 import org.aegisdefender.Model.Core.WaveManager;
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
-import org.aegisdefender.Model.Entities.Enemies.Posamine;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +15,6 @@ public class GameModel{
     private List<GameObserver> observer;
     private List<List<Projectile>>  enemyProjectiles;
 
-    private Posamine posamine;
-
     //------------//
     public GameModel(){
         player = new Player();
@@ -24,9 +22,6 @@ public class GameModel{
         // observer list
         observer = new ArrayList<>();
         enemyProjectiles = new ArrayList<>();
-
-        //Enemies
-        posamine = new Posamine();
     }
 
     public void addObserver(GameObserver ob){
@@ -38,8 +33,13 @@ public class GameModel{
 
     public void notifyObserver(){
         for(GameObserver ob: observer){
-            ob.updatePlayer(player.getX(),player.getY(),player.getPlayerWidth(),player.getPlayerHeight());
-            ob.updateProjectiles(new ArrayList<>(player.playerProjectiles()));
+            ob.updatePlayer(
+                    player.getX(),
+                    player.getY(),
+                    player.getPlayerWidth(),
+                    player.getPlayerHeight()
+            );
+            ob.updateProjectiles(player.playerProjectiles());
         }
     }
 
@@ -59,7 +59,6 @@ public class GameModel{
     public int getPlayerX(){return player.getX();}
     public int getPlayerY(){return player.getY();}
     public void init(){notifyObserver();}
-
     public void spawnPlayerProjectile(){
         player.shoot();
     }
@@ -68,6 +67,18 @@ public class GameModel{
         player.updateProjectiles();
         notifyObserver();
     }
+    /***************************************PLAYER HEALTH BAR DATA AND HITBOX**************************************/
+
+    public Rectangle playerHitBox(){
+        return player.HitBox();
+    }
+    public Rectangle getHealthBar(){
+        return player.gethealthBar();
+    }
+    public int getPlayerCurrentHealth(){
+        return player.getCurrentHealth();
+    }
+
     /****************************************************************************************************************
      *********************************************** ENEMY DATA *****************************************************
      ****************************************************************************************************************/
@@ -80,15 +91,19 @@ public class GameModel{
     }
 
     public List<Enemy> getActiveEnemies(){
-        return waveManager.getActiveEnemies();
+        return List.copyOf(waveManager.getActiveEnemies()); // just send a copy
     }
 
     public void updateEnemyProjectiles(){
-        posamine.updateEnemyProjectiles();
-        enemyProjectiles.add(posamine.getProjectiles());
+        enemyProjectiles.clear();
+
+        for(Enemy enemy : waveManager.getActiveEnemies()){
+            enemy.updateEnemyProjectiles();
+            enemyProjectiles.add(enemy.getProjectiles());
+        }
     }
 
     public List<List<Projectile>> getEnemyProjectiles(){
-        return this.enemyProjectiles;
+        return new ArrayList<>(this.enemyProjectiles); // copy snapshot
     }
 }
