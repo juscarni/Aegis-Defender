@@ -3,8 +3,17 @@ package org.aegisdefender.View;
 import org.aegisdefender.Config.GameConfig;
 import org.aegisdefender.Config.UIConfig;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.ImageIcon;
+import javax.swing.Timer;
+
+import java.awt.Image;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.RenderingHints;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -175,7 +184,7 @@ public class GamePanel extends JPanel implements ActionListener{
                 }
                 switch (p.type().toUpperCase()){
                     case "KAMIKAZE" -> {
-                       continue; // because a kamikaze doesn't have projectiles
+                       continue; // because a kamikaze doesn't have projectiles (this problem will be fixed at the end)
                     }
                     case "POSAMINE" -> {
                         enemyProjectile = this.posamine_projectile;

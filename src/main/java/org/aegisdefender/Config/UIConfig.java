@@ -14,7 +14,6 @@ public class UIConfig {
 
 
     public static final int CURSOR_IMG_SIZE = 16;
-    // Point d'ancrage du curseur (0,0 = coin supérieur gauche)
     public static final int HOTSPOT_X = 0;
     public static final int HOTSPOT_Y = 0;
     public static final String CURSOR_NAME = "blank cursor";

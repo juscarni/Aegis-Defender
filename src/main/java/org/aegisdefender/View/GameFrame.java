@@ -3,9 +3,12 @@ package org.aegisdefender.View;
 
 import org.aegisdefender.Config.UIConfig;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+
+import java.awt.Toolkit;
+import java.awt.Cursor;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 
 public class GameFrame extends JFrame {
     private GamePanel gamepanel;

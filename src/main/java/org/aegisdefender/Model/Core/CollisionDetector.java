@@ -4,7 +4,9 @@ import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.util.List;
 
 public class CollisionDetector {
@@ -50,7 +52,6 @@ public class CollisionDetector {
         return getCollisionPointPlayerProjectileAndEnemy(playerProjectiles) != null;
     }
 
-    /** Punto di collisione (centro overlap) tra Player e un Enemy specifico */
     public Point getCollisionPointPlayerEnemy(Enemy enemy) {
         if (player == null || enemy == null) return null;
 
@@ -58,7 +59,6 @@ public class CollisionDetector {
         return (overlap == null) ? null : centerOf(overlap);
     }
 
-    /** Punto di collisione tra Player e QUALSIASI Enemy (ritorna il primo trovato) */
     public Point getCollisionPointPlayerAndEnemy(){
         if (player == null || enemies == null) return null;
 
@@ -74,7 +74,6 @@ public class CollisionDetector {
         return null;
     }
 
-    /** Punto di collisione tra QUALSIASI proiettile nemico e il Player (primo trovato) */
     public Point getCollisionPointEnemyProjectileAndPlayer(){
         if (player == null || enemyProjectiles == null) return null;
 
@@ -95,7 +94,6 @@ public class CollisionDetector {
         return null;
     }
 
-    /** Punto di collisione tra QUALSIASI proiettile del Player e QUALSIASI Enemy (primo trovato) */
     public Point getCollisionPointPlayerProjectileAndEnemy(List<Projectile> playerProjectiles){
         if (playerProjectiles == null || enemies == null) return null;
 

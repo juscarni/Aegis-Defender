@@ -5,7 +5,10 @@ import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.EnemyLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,7 @@ public class Posamine extends Enemy{
     private final int PROJECTILE_WIDTH = UIConfig.TILES/2;
     private final int PROJECTILE_HEIGHT = UIConfig.TILES/2;
 
-    private int startX;                // position X de référence pour le zigzag
+    private int startX;
     private Projectile projectile;
     private List<Projectile> projectiles;
     private EnemyLaser enemyLaser;
@@ -30,7 +33,7 @@ public class Posamine extends Enemy{
     private enum Phase { DESCENDING, STABILIZING, ASCENDING }
     private Phase phase = Phase.DESCENDING;
     private int stabilizeTimer = 0;
-    private static final int STABILIZE_DURATION = 120; // frames de stabilisation
+    private static final int STABILIZE_DURATION = 120;
 
 
     public Posamine(){
@@ -77,7 +80,7 @@ public class Posamine extends Enemy{
 
     @Override
     public void move(Player player) {
-        // Zigzag horizontal (actif dans toutes les phases)
+        // Zigzag horizontal
         double amplitude = UIConfig.TILES ;
         double frequency = 0.05;
         this.x = (int) (startX + amplitude * Math.sin(frequency * this.y));

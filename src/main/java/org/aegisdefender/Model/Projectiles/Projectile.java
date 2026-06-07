@@ -1,6 +1,6 @@
 package org.aegisdefender.Model.Projectiles;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public abstract class Projectile {
     protected int projectileX;

@@ -4,7 +4,10 @@ import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.util.List;
 import java.util.Random;
 
@@ -142,7 +145,7 @@ public class Kamikaze extends Enemy{
 
 
      /*********************
-     * Specific methods
+     * Specific methods, this problem of progetation will be fixed later because a kamikaze cannot shoot
      * *********************/
     @Override
     public Projectile shoot() {

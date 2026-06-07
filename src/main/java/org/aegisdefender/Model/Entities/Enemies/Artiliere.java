@@ -5,7 +5,10 @@ import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.EnemyLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,6 @@ public class Artiliere extends Enemy {
 
     private final List<Projectile> projectiles = new ArrayList<>();
 
-    // Movimento: entra dall’alto, si ferma, poi “patrol” orizzontale
     private enum Phase { DESCENDING, PATROLLING }
     private Phase phase = Phase.DESCENDING;
 
@@ -56,7 +58,6 @@ public class Artiliere extends Enemy {
 
     @Override
     public void enemyBehavior(Player player) {
-        // Spara solo quando è entrato nella scena (non in discesa)
         if (phase == Phase.PATROLLING) {
             updateEnemyProjectiles();
         }
@@ -69,8 +70,6 @@ public class Artiliere extends Enemy {
 
     @Override
     public String getType() {
-        // Se nel tuo EnemyFactory.EnemyType esiste ARTILIERE, questo è perfetto.
-        // Altrimenti cambia in una stringa fissa "ARTILIERE".
         return EnemyFactory.EnemyType.ARTILIERE.name();
     }
 
@@ -132,7 +131,7 @@ public class Artiliere extends Enemy {
 
     @Override
     public Rectangle getProjectileHitBox() {
-        // Se ti serve “un” hitbox da enemy: uso l’ultimo proiettile se presente
+       //--
         if (projectiles.isEmpty()) {
             return new Rectangle(0, 0, 0, 0);
         }
@@ -141,13 +140,11 @@ public class Artiliere extends Enemy {
 
     @Override
     public Point getProjectileSpawnPoint() {
-        // Emette dal “centro basso” del nemico (adattabile per sprite diversi)
         return new Point(this.x + SPAWN_POINT_OFFSET_X, this.y + this.SPAWN_POINT_OFFSET_Y);
     }
 
     @Override
     public Dimension getProjectileSize() {
-        // Proiettile un po’ più “grosso” del laser base
         return new Dimension(PROJECTILE_WIDTH, PROJECTILE_HEIGHT);
     }
 

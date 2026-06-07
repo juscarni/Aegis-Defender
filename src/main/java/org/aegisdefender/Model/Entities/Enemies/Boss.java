@@ -3,7 +3,10 @@ package org.aegisdefender.Model.Entities.Enemies;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.util.List;
 
 public class Boss extends Enemy{

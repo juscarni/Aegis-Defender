@@ -5,7 +5,10 @@ import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.EnemyLaser;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class Berserker extends Enemy {
         this.x = UIConfig.WINDOW_WIDTH / 2;
         this.y = -UIConfig.TILES * 4;
 
-        this.speed = 3;      // velocità “base” per l’entrata
+        this.speed = 3;
         this.health = 180;   // più tanky
 
         this.width = UIConfig.TILES * 4;
@@ -54,7 +57,6 @@ public class Berserker extends Enemy {
 
     @Override
     public Rectangle getHitBox() {
-        // hitbox un po’ “stretta” rispetto allo sprite
         return new Rectangle(
                 x + UIConfig.TILES,
                 y + UIConfig.TILES,

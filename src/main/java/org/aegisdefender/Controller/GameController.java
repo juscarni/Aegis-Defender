@@ -12,12 +12,16 @@ import org.aegisdefender.View.GameFrame;
 import org.aegisdefender.View.PlayerRenderData;
 import org.aegisdefender.View.ProjectileRenderData;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Timer;
+
+import java.awt.Point;
+import java.awt.Robot;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 

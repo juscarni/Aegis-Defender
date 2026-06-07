@@ -49,10 +49,8 @@ public class WaveManager {
 
         timer += deltaTimeMs;
 
-        // 1. Nettoyage automatique des morts
         activeEnemies.removeIf(e -> !e.isAlive());
 
-        // 2. Spawn solo se non c'è wave in corso e il delay è passato
         if (!waveInProgress) {
             if (timer < DELAY) {
                 return;

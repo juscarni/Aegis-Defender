@@ -2,8 +2,6 @@ package org.aegisdefender.Model.Projectiles;
 
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
 
-import java.awt.*;
-
 public class EnemyLaser extends Projectile{
 
     public EnemyLaser(Enemy enemy){

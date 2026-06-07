@@ -26,9 +26,7 @@ public class EnemyFactory {
             default -> throw new IllegalArgumentException("Unknown enemy type: " + type);
         };
     }
-    /**
-     * Méthode helper qui assigne un pattern intéressant selon la vague et la zone
-     */
+
     public List<Enemy> createEnemyGroup(EnemyType type, int count, int pattern) {
         List<Enemy> group = new ArrayList<>();
 
@@ -36,14 +34,13 @@ public class EnemyFactory {
             for (int i = 0; i < count; i++) {
                 Kamikaze k = (Kamikaze) createEnemy(type);
 
-                // Position X aléatoire avec marge
                 int x = 60 + (int)(Math.random() * (UIConfig.WINDOW_WIDTH - 120));
-                int y = -60 - (i * 45) - (int)(Math.random() * 80); // spawn échelonné
+                int y = -60 - (i * 45) - (int)(Math.random() * 80);
 
                 k.setX(x);
                 k.setY(y);
                 k.setSpeed(7 /*rand.nextInt(4)*/);
-                k.setPattern(pattern);        // ← pattern unique pour toute la vague
+                k.setPattern(pattern);        //
 
                 group.add(k);
             }
