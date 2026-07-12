@@ -4,15 +4,14 @@ import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionDetector {
     private final Player player;
     private final List<Enemy> enemies;
-    private final List<List<Projectile>> enemyProjectiles;
+    private List<List<Projectile>> enemyProjectiles;
 
     public CollisionDetector(List<Enemy> enemies, Player player, List<List<Projectile>> projectiles){
         this.enemies = enemies;
@@ -35,7 +34,7 @@ public class CollisionDetector {
         return intersection(a, b) != null;
     }
 
-    public boolean checkCollisionPlayerEnemy(Enemy enemy){
+    public boolean collisiOnPlayerEnemy(Enemy enemy){
         if (player == null || enemy == null) return false;
         return intersects(player.HitBox(), enemy.getHitBox());
     }
@@ -48,8 +47,8 @@ public class CollisionDetector {
         return getCollisionPointEnemyProjectileAndPlayer() != null;
     }
 
-    public boolean collisionPlayerProjectileAndEnemy(List<Projectile> playerProjectiles){
-        return getCollisionPointPlayerProjectileAndEnemy(playerProjectiles) != null;
+    public boolean collisionPlayerProjectileAndEnemy(){
+        return getCollisionPointPlayerProjectileAndEnemy(player.playerProjectiles()) != null;
     }
 
     public Point getCollisionPointPlayerEnemy(Enemy enemy) {
@@ -112,5 +111,57 @@ public class CollisionDetector {
             }
         }
         return null;
+    }
+    /**
+     * PlayerProjectile -> Enemy
+     * Ritorna tutti gli hit del frame.
+     * Regola: un proiettile colpisce al massimo 1 nemico (break sulla prima intersezione).
+     */
+    public List<HitResult> findAllPlayerProjectileHits(){
+        List<HitResult> hits = new ArrayList<>();
+        List<Projectile> playerProjectiles = player.playerProjectiles();
+
+        if (playerProjectiles == null || enemies == null) return hits; //
+
+        for (Projectile p : playerProjectiles) {
+            if (p == null) continue;
+
+            Rectangle pBox = p.getProjectileHitBox();
+            if (pBox == null) continue;
+            for (Enemy e : enemies) {
+                if (e == null) continue;
+
+                Rectangle overlap = intersection(pBox, e.getHitBox());
+                if (overlap != null) {
+                    hits.add(new HitResult(p, e, centerOf(overlap)));
+                    break;
+                }
+            }
+        }
+        return hits;
+    }
+    /*
+     * EnemyProjectile -> Player
+     * Ritorna tutti gli hit del frame.
+     */
+    public List<HitResult> findAllEnemyProjectileHits(){
+        List<HitResult> hits = new ArrayList<>();
+
+        if(this.enemyProjectiles == null || player == null) return hits;
+
+        for(List<Projectile> list : this.enemyProjectiles){
+            if(list == null) continue;
+            for (Projectile p : list) {
+                if (p == null) continue;
+                Rectangle pBox = p.getProjectileHitBox();
+                if (pBox == null) continue;
+                Rectangle overlap  = intersection(pBox, player.HitBox());
+                if (overlap != null) {
+                    hits.add(new HitResult(p , p.getProjectileOwner(), centerOf(overlap))); // this bug has been fixed.
+                    break; // a projectile can touch a player once...
+                }
+            }
+        }
+        return  hits;
     }
 }

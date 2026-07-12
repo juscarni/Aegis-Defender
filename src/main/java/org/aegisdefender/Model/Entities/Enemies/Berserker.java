@@ -16,7 +16,7 @@ public class Berserker extends Enemy {
 
     private final int contactDamage = 35;
 
-    private final List<Projectile> projectiles = new ArrayList<>();
+    private List<Projectile> projectiles = new ArrayList<>();
     private long lastShootTime = 0;
     private static final int SHOOT_DELAY_MS = 650;
 
@@ -35,6 +35,7 @@ public class Berserker extends Enemy {
 
         this.speed = 3;
         this.health = 180;   // più tanky
+        this.isExploding = false;
 
         this.width = UIConfig.TILES * 4;
         this.height = UIConfig.TILES * 4;
@@ -44,6 +45,7 @@ public class Berserker extends Enemy {
         this.maxHealth = 180;
         this.HEALTH_BAR_OFFSET_X = 40;
         this.HEALTH_BAR_OFFSET_Y = 80;
+        this.pointOnEnemyDead = 150;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class Berserker extends Enemy {
             return false;
         }
         int margin = UIConfig.TILES * 2;
-        return this.y < UIConfig.WINDOW_HEIGHT + this.height + margin;
+        return this.y < UIConfig.WINDOW_HEIGHT + this.height + margin || this.health == 0;
     }
 
     @Override
@@ -171,7 +173,7 @@ public class Berserker extends Enemy {
 
     @Override
     public List<Projectile> getProjectiles() {
-        return new ArrayList<>(this.projectiles);
+        return this.projectiles;
     }
 
     @Override

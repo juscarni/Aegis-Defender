@@ -10,5 +10,6 @@ public class EnemyLaser extends Projectile{
         this.projectileWidth = enemy.getProjectileSize().width;
         this.projectileHeight = enemy.getProjectileSize().height;
         this.type = enemy.getType();
+        this.enemy = enemy;
     }
 }

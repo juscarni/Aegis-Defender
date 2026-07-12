@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Boss extends Enemy{
@@ -42,19 +43,18 @@ public class Boss extends Enemy{
     }
 
     @Override
-    public void updateEnemyProjectiles() {
-
-    }
+    public void updateEnemyProjectiles() {}
 
     @Override
     public List<Projectile> getProjectiles() {
-        return List.of();
-    }
+        return new ArrayList<>();
+    } //
 
     @Override
     public Rectangle getProjectileHitBox() {
         return null;
     }
+
 
     @Override
     public Point getProjectileSpawnPoint() {

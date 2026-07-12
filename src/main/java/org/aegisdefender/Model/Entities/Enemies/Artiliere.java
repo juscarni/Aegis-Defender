@@ -23,7 +23,7 @@ public class Artiliere extends Enemy {
     private long lastShootTime = 0;
     private static final int SHOOT_DELAY_MS = 200;
 
-    private final List<Projectile> projectiles = new ArrayList<>();
+    private List<Projectile> projectiles = new ArrayList<>();
 
     private enum Phase { DESCENDING, PATROLLING }
     private Phase phase = Phase.DESCENDING;
@@ -33,18 +33,20 @@ public class Artiliere extends Enemy {
 
     public Artiliere() {
         this.x = UIConfig.WINDOW_WIDTH / 2;
-        this.y = -UIConfig.TILES * 4;
+        this.y = - UIConfig.TILES * 4;
         this.width = UIConfig.TILES * 4;
         this.height = UIConfig.TILES * 4;
 
         this.speed = 2;
         this.health = 120;
+        this.isExploding = false;
 
         this.healthBarWidth = 80;
         this.healthBarHeight = 6;
         this.maxHealth = 120;
         this.HEALTH_BAR_OFFSET_X = 40;
         this.HEALTH_BAR_OFFSET_Y = 80;
+        this.pointOnEnemyDead = 150;
     }
 
     @Override
@@ -75,6 +77,12 @@ public class Artiliere extends Enemy {
 
     @Override
     public void move(Player player) {
+
+        if(isExploding){
+            this.triggerExplosion();
+            return;
+        }
+
         if (!startXInitialized) {
             startX = this.x - 70;
             startXInitialized = true;
@@ -126,7 +134,7 @@ public class Artiliere extends Enemy {
 
     @Override
     public List<Projectile> getProjectiles() {
-        return new ArrayList<>(this.projectiles);
+        return this.projectiles;
     }
 
     @Override

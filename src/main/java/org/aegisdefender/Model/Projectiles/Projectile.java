@@ -1,6 +1,8 @@
 package org.aegisdefender.Model.Projectiles;
 
-import java.awt.Rectangle;
+import org.aegisdefender.Model.Entities.Enemies.Enemy;
+
+import java.awt.*;
 
 public abstract class Projectile {
     protected int projectileX;
@@ -8,6 +10,7 @@ public abstract class Projectile {
     protected int projectileWidth;
     protected int projectileHeight;
     protected int projectileSpeed;
+    protected Enemy enemy;
     protected String type;
 
     public int getLaserX(){
@@ -34,7 +37,8 @@ public abstract class Projectile {
                 getLaserHeight()-2
         );
     }
-    public String getType(){
-        return type;
+    public Enemy getProjectileOwner(){
+        return this.enemy;
     }
+    public String getType(){return this.type;}
 }

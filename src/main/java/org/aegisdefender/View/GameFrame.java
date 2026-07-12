@@ -3,31 +3,39 @@ package org.aegisdefender.View;
 
 import org.aegisdefender.Config.UIConfig;
 
-import javax.swing.JFrame;
-
-import java.awt.Toolkit;
-import java.awt.Cursor;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.Point;
 
 public class GameFrame extends JFrame {
     private GamePanel gamepanel;
+    private MainMenuPanel mainMenuPanel;
+    private static GameFrame instance;
 
     //-----
     public GameFrame(){
-        gamepanel = new GamePanel();
-        this.add(gamepanel);
-        this.pack();
+        this.setTitle("aegisdefender");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        initGame();
+        this.pack();
         this.setLocationRelativeTo(null);
         this.requestFocus();
         this.requestFocusInWindow();
-        this.setCursor(setCursorInvisible());// get an invisible cursor
+        //this.setCursor(setCursorInvisible());// get an invisible cursor
+        this.setResizable(false);
+
+        this.setVisible(true);
+        instance = this;
+    }
+
+    public void initGame(){
+        mainMenuPanel = new MainMenuPanel();
+        this.add(mainMenuPanel.menuPanel());
     }
 
 
     public GamePanel getGamePanel(){
-        return gamepanel;
+        return this.mainMenuPanel.getGamePanel();
     }
 
     public Cursor setCursorInvisible(){
@@ -40,4 +48,11 @@ public class GameFrame extends JFrame {
         );
     }
 
+    public static GameFrame getInstance() {
+        return instance;
+    }
+
+    public MainMenuPanel getMainMenuPanel(){
+        return this.mainMenuPanel;
+    }
 }

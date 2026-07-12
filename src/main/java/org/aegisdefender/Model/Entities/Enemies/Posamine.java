@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Posamine extends Enemy{
 
-    private final int attackPower = 30;
+    private final int attackPower = 10;
     private long currentTime = 0;
     private long lastShootTime = 0;
 
@@ -43,14 +43,16 @@ public class Posamine extends Enemy{
         this.health = 100;
         this.width = UIConfig.TILES*4;
         this.height = UIConfig.TILES*4;
-
         this.healthBarWidth = 80;
         this.healthBarHeight = 6;
         this.maxHealth = 100;
+        this.isExploding = false;
+
         this.HEALTH_BAR_OFFSET_X = 40;
         this.HEALTH_BAR_OFFSET_Y = 80;
 
-        projectiles = new ArrayList<>();
+        this.projectiles = new ArrayList<>();
+        this.pointOnEnemyDead = 200;
     }
 
     @Override
@@ -80,7 +82,14 @@ public class Posamine extends Enemy{
 
     @Override
     public void move(Player player) {
+        //explosion simulation
+        if(isExploding){
+            this.triggerExplosion();
+            return;
+        }
+
         // Zigzag horizontal
+
         double amplitude = UIConfig.TILES ;
         double frequency = 0.05;
         this.x = (int) (startX + amplitude * Math.sin(frequency * this.y));
@@ -118,12 +127,12 @@ public class Posamine extends Enemy{
     @Override
     public void updateEnemyProjectiles() {
         // 1) Aggiorna SEMPRE i proiettili già esistenti (così non restano “congelati”)
-        for(int i = 0; i < projectiles.size(); i++){
-            Projectile p = projectiles.get(i);
+        for(int i = 0; i < this.projectiles.size(); i++){
+            Projectile p = this.projectiles.get(i);
             p.setLaserY(p.getLaserY() + 7);
 
             if(p.getLaserY() > UIConfig.WINDOW_HEIGHT + UIConfig.TILES){
-                projectiles.remove(i);
+                this.projectiles.remove(i);
                 i--;
             }
         }
@@ -149,7 +158,7 @@ public class Posamine extends Enemy{
 
     @Override
     public List<Projectile> getProjectiles() {
-        return new ArrayList<>(this.projectiles);
+        return this.projectiles;
     }
 
     @Override
@@ -173,20 +182,19 @@ public class Posamine extends Enemy{
     }
 
     @Override
-    public boolean isAlive(){
+    public boolean isAlive(){ //
         int margin = UIConfig.TILES;
 
         boolean tooLow = this.y > UIConfig.WINDOW_HEIGHT + this.height + margin;
-        boolean tooHigh = (this.y + this.height) < -margin;
+        boolean tooHigh = (this.y + this.height) < - margin;
 
-        boolean outOfScreen = tooLow || tooHigh;
+       boolean outOfScreen = tooLow || tooHigh;
 
         // Se è fuori schermo ma ha ancora proiettili attivi, resta “vivo”
         // solo per permettere l’update dei proiettili (ma non ne spawnerà di nuovi).
         if (outOfScreen) {
             return !projectiles.isEmpty();
         }
-        return true;
+       return this.isAlive;
     }
-
 }

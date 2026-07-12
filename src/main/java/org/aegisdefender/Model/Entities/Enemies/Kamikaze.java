@@ -4,19 +4,17 @@ import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Kamikaze extends Enemy{
 
-    private final int attackPower = 30;
+    private final int attackPower = 20;
     private static final Random rand = new Random();
 
-    // === Variables pour les patterns ===
+    // pattern variables
     private int patternType;        // 0 à 4
     private double angle = 0.0;
     private double amplitude = 0.0;
@@ -27,10 +25,11 @@ public class Kamikaze extends Enemy{
     public Kamikaze(){
         this.x = 100;
         this.y = -10;
-        this.speed = 6;
+        this.speed = 4;
         this.health = 100;
         this.width = UIConfig.TILES*3;
         this.height = UIConfig.TILES*3;
+        this.isExploding = false;
 
         this.healthBarWidth = 30;
         this.healthBarHeight = 4;
@@ -40,6 +39,7 @@ public class Kamikaze extends Enemy{
         // Par défaut on donne un pattern aléatoire (tu pourras le changer depuis le WaveManager)
         this.patternType = rand.nextInt(5);
         this.amplitude = 60 + rand.nextInt(60); // entre 60 et 120 pixels d'oscillation
+        this.pointOnEnemyDead = 100;
 
     }
     // Méthode simple pour choisir le pattern
@@ -52,12 +52,26 @@ public class Kamikaze extends Enemy{
 
     @Override
     public void attack(Player player) {
+        // if we have a collision here an enemy can't attack anymore.
+        if(isExploding){
+            return;
+        }
+        System.out.println("kamikaze has attacked player");
+        this.explosionStartTime  = System.currentTimeMillis();
         player.takeDamaged(attackPower);
+
+        this.isExploding = true;
+        this.speed = 0;
     }
 
     @Override
     public void move(Player player) {
         // Descente de base toujours présente (effet kamikaze)
+        if(isExploding){
+            this.triggerExplosion();
+            return;
+        }
+
         this.y += speed;
 
         switch (patternType) {
@@ -138,10 +152,8 @@ public class Kamikaze extends Enemy{
     }
      @Override
     public boolean isAlive(){
-        return (this.y < UIConfig.WINDOW_HEIGHT + UIConfig.TILES*2);
+        return (this.y < UIConfig.WINDOW_HEIGHT + UIConfig.TILES*2) && this.isAlive;
      }
-
-
 
 
      /*********************
@@ -155,13 +167,14 @@ public class Kamikaze extends Enemy{
     public void updateEnemyProjectiles() {}
     @Override
     public List<Projectile> getProjectiles() {
-        return List.of();
-    }
+        return new ArrayList<>();
+    } // this was a problem now i can fix it (it was List.of())
 
     @Override
     public Rectangle getProjectileHitBox() {
         return null;
     }
+
 
     @Override
     public Point getProjectileSpawnPoint() {
