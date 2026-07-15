@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Artiliere extends Enemy {
 
-    private final int attackPower = 20;
+    private final int attackPower = 12;
     private final int SPAWN_POINT_OFFSET_X = 70;
     private final int SPAWN_POINT_OFFSET_Y = UIConfig.TILES*2 + 10;
     private final int PROJECTILE_WIDTH = UIConfig.TILES/2;

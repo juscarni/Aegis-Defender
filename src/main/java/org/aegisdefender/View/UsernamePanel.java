@@ -7,7 +7,6 @@ import java.io.InputStream;
 public class UsernamePanel extends StarBackgroundPanel {
 
     private  JTextField inputField;
-    private Runnable onConfirm;
 
     public UsernamePanel() {
         setLayout(new GridBagLayout());
@@ -136,5 +135,5 @@ public class UsernamePanel extends StarBackgroundPanel {
         return p;
     }
 
-    public String getUsername(){ return inputField.getText().trim();}
+    public String getUsername(){ return inputField.getText().trim().toLowerCase(); }
 }

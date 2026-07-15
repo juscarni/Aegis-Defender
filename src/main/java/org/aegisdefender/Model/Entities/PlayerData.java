@@ -1,33 +1,82 @@
 package org.aegisdefender.Model.Entities;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
+
 
 public class PlayerData {
 
     private Map<String, PlayerInfos> data;
+    private List<String[]> playerData;
 
     public PlayerData() {
         this.data = new HashMap<>();
+        this.playerData = new ArrayList<>();
     }
 
-    public Map<String, PlayerInfos> getData() {
-        return data;
+    public void loadPlayerData(List<String[]> playerData){
+        this.playerData = playerData.isEmpty() ? null : playerData;
+
+        if(this.playerData != null){
+            System.out.println("PlayerData have been loaded on memory ");
+            for(String[] player : this.playerData){
+                if(player.length < 4 ) continue;
+                data.put(player[0],
+                        new PlayerInfos(player[0],
+                                Integer.parseInt(player[1]),
+                                Integer.parseInt(player[2]),
+                                player[3]
+                        ));
+            }
+        }
     }
 
-    public void updateData(String username, int score , int kills, LocalDateTime localeDateTime){
+    public List<String[]> getData() {
+        List<String[]> list = new ArrayList<>();
+
+        data.forEach((key, value) -> {
+            list.add(new String[]{value.username,
+                            String.valueOf(value.score),
+                            String.valueOf(value.kills),
+                            value.localDateTime
+            }
+            );
+        });
+        // we have to sort the list elements in function of best score
+        list.sort(
+                Comparator.comparingInt(
+                        (String[] row) -> Integer.parseInt(row[1])
+                ).reversed()
+        );
+        return  list;
+    }
+
+    public void updateData(String username, int score , int kills, String localDateTime){
         if(data.containsKey(username)){
             if(data.get(username).getScore() < score) {
                 data.get(username).setScore(score);
                 data.get(username).setKills(kills);
-                data.get(username).setLocalDateTime(localeDateTime);
+                data.get(username).setLocalDateTime(localDateTime);
             }
         }
         else{
-            data.put(username, new PlayerInfos(username, score, kills, localeDateTime));
+            data.put(username, new PlayerInfos(username, score, kills, localDateTime));
         }
+    }
+
+    public int getBestScore(){
+        int bestScore = 0;
+        if(data.isEmpty()) return bestScore;
+
+        for(Map.Entry<String,PlayerInfos> element : data.entrySet()){
+            if(element.getValue().getScore() > bestScore){
+                bestScore = element.getValue().getScore();
+            }
+        }
+        return bestScore;
     }
 
     /********* Inner class  **************/
@@ -37,31 +86,15 @@ public class PlayerData {
         private int score;
         private int kills;
 
-        public PlayerInfos(String username, int score, int kills , LocalDateTime localDateTime) {
+        public PlayerInfos(String username, int score, int kills , String localDateTime) {
             this.kills = kills;
             this.score = score;
             this.username = username;
-            this.localDateTime = localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy | hh:mm:ss"));
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public String getLocalDateTime() {
-            return localDateTime;
+            this.localDateTime = localDateTime;
         }
 
         public int getScore() {
             return score;
-        }
-
-        public int getKills() {
-            return kills;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
         }
 
         public void setKills(int kills) {
@@ -72,8 +105,8 @@ public class PlayerData {
             this.score = score;
         }
 
-        public void setLocalDateTime(LocalDateTime localDateTime) {
-            this.localDateTime = localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy | hh:mm:ss"));
+        public void setLocalDateTime(String localDateTime) {
+            this.localDateTime = localDateTime;
         }
 
         @Override

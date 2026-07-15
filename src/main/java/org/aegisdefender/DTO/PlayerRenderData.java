@@ -1,4 +1,4 @@
-package org.aegisdefender.View;
+package org.aegisdefender.DTO;
 
 import java.awt.*;
 

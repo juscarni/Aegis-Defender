@@ -35,7 +35,7 @@ public class WaveManager {
     public void initWaves(){
         // --- WAVE 1 ---
         List<EnemyGroup> group1 = new ArrayList<>();
-        group1.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 5, 2, 2.5));
+        group1.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 5, 1, 2.5));
         waves.add(new Wave(1, group1));
 
         // --- WAVE 2 ---
@@ -46,28 +46,28 @@ public class WaveManager {
 
         // --- VAGUE 3 : Pression ---
         List<EnemyGroup> group3 = new ArrayList<>();
-        group3.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 8, 2, 2.0));
+        group3.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 6, 2, 2.0));
         group3.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 3, 0, 1.5));
         waves.add(new Wave(3, group3));
 
         // --- WAVE 4 ---
         List<EnemyGroup> group4 = new ArrayList<>();
-        group4.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 6, 2, 2.0));
+        group4.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 4, 2, 2.0));
         group4.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 2, 1, 1.5));
         waves.add(new Wave(4, group4));
 
-        // --- WAVE 5 --- : Chaos contrôlé ---
+        // --- WAVE 5 --- :---
         List<EnemyGroup> group5 = new ArrayList<>();
-        group5.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 8, 2, 2.0));
+        group5.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 6, 2, 2.0));
         group5.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 4, 0, 1.5));
-        group5.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 3, 1, 1.5));
+        //group5.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 2, 1, 1.5));
         waves.add(new Wave(5, group5));
 
         // --- WAVE 6 ---
         List<EnemyGroup> group6 = new ArrayList<>();
         group6.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 5, 3, 2.5));
-        group6.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 6, 0, 1.0));
-        group6.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 4, 1, 1.5));
+        group6.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 4, 0, 1.0));
+        group6.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 3, 1, 1.5));
         waves.add(new Wave(6, group6));
 
         // --- WAVE 7 ---

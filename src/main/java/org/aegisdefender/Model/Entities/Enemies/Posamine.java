@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Posamine extends Enemy{
 
-    private final int attackPower = 10;
+    private final int attackPower = 8;
     private long currentTime = 0;
     private long lastShootTime = 0;
 
@@ -25,7 +25,6 @@ public class Posamine extends Enemy{
     private final int PROJECTILE_HEIGHT = UIConfig.TILES/2;
 
     private int startX;
-    private Projectile projectile;
     private List<Projectile> projectiles;
     private EnemyLaser enemyLaser;
 

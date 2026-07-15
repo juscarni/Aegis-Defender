@@ -1,5 +1,7 @@
 package org.aegisdefender.Model;
 
+import org.aegisdefender.Audio.AudioManager;
+
 import org.aegisdefender.Model.Core.CollisionDetector;
 import org.aegisdefender.Model.Core.HitResult;
 import org.aegisdefender.Model.Core.WaveManager;
@@ -9,17 +11,27 @@ import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Entities.PlayerData;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import org.aegisdefender.PlayerRepository.PlayerRepository;
+
+import java.awt.Point;
+import java.awt.Rectangle;
+
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GameModel{
+public class GameModel {
+
     private Player player;
     private PlayerData playerData;
     private WaveManager waveManager;
+    private PlayerRepository playerRepository;
 
     private List<GameObserver> observer;
     private List<List<Projectile>>  enemyProjectiles;
@@ -30,27 +42,29 @@ public class GameModel{
     private List<Point> impactPointsOnPlayerAttackEnemyCurrentFrame;
     private List<Point> impactPointsOnEnemyAttackPlayerCurrentFrame;
 
-    //------------//
+    private AudioManager audioManager;
+
     public GameModel(){
+        modelInit();
+        playBackgroundMusic();
+    }
+
+    public void modelInit(){
         player = new Player();
         waveManager = new WaveManager();
-        // observer list
         observer = new ArrayList<>();
-
         enemyProjectiles = new ArrayList<>();
         activeEnemies = new ArrayList<>();
-
-        // Impact points of player and enemy
         impactPointsOnPlayerAttackEnemyCurrentFrame = new ArrayList<>();
         impactPointsOnEnemyAttackPlayerCurrentFrame = new ArrayList<>();
-        playerData = new PlayerData(); //----
+        playerData = new PlayerData();
+        playerRepository = new PlayerRepository();
+        audioManager = new AudioManager();
+        loadPlayerData();
     }
 
     public void addObserver(GameObserver ob){
         observer.add(ob);
-    }
-    public void removeObserver(GameObserver ob){
-        observer.remove(ob);
     }
 
     public void notifyObserver(){
@@ -68,7 +82,7 @@ public class GameModel{
     /****************************************************************************************************************
      ********************************************** PLAYER DATA *****************************************************
      ****************************************************************************************************************/
-    public void setPLayerX(int x){
+    public void setPlayerX(int x){
         player.setX(x);
         notifyObserver();
     }
@@ -93,6 +107,7 @@ public class GameModel{
     public boolean isPlayerAlive(){
         return this.player.isAlive();
     }
+
     public int getPLAYER_MIN_X() {
         return player.getPLAYER_MIN_X();
     }
@@ -227,6 +242,7 @@ public class GameModel{
         }
     }
 
+
     public int getWaveIndex(){
         return waveManager.getCurrentWaveIndex() + 1; // + 1 because we know that the index starts by 0 ...
     }
@@ -237,11 +253,31 @@ public class GameModel{
         return this.waveManager.getScore();
     }
 
+    /* *******************************  LOAD AND SAVE PLAYER_DATA TO PLAYER.CSV FILE   ***********************************/
+     /******************************************************************************************************************/
     public void setPlayerData(String username, int score, int kills, LocalDateTime localDateTime) {
-        this.playerData.updateData(username, score, kills, localDateTime);
+        String dateTime = localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy|HH:mm:ss"));
+        this.playerData.updateData(username, score, kills, dateTime);
     }
 
-    public void getInfos(){
-        this.playerData.getData().forEach((key , value) -> System.out.println(value));
+    public void loadPlayerData(){
+        List<String[]> playerDataFromCsv = playerRepository.readPlayerDataFromCsv();
+        playerData.loadPlayerData(playerDataFromCsv);
+    }
+
+    public int getBestScore(){
+        return this.playerData.getBestScore();
+    }
+
+    public void savePlayerData(){
+        playerRepository.savePlayerData(playerData.getData());
+    }
+
+    public void playBackgroundMusic(){
+        this.audioManager.playSound();
+    }
+
+    public List<String[]> getPlayerData(){
+        return this.playerData.getData();
     }
 }

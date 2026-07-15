@@ -3,7 +3,10 @@ package org.aegisdefender.Model.Entities.Enemies;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Point;
+import java.awt.Dimension;
+
 import java.util.List;
 
 public abstract class Enemy {
@@ -70,7 +73,6 @@ public abstract class Enemy {
     public boolean isExploding(){return this.isExploding;}
     public void setSpeed(int speed){this.speed = speed;}
     public int getSpeed(){return this.speed;}
-    public int getHealth() {return this.health;}
     public int getPoints(){
         return this.pointOnEnemyDead;
     }

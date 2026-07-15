@@ -11,14 +11,17 @@ public class AppController {
 
     public AppController(){
         gameFrame = new GameFrame();
+        gameModel = new GameModel();
+        gameController = new GameController(gameFrame, gameModel);
+
         // this is a listener , if we click to the button play the game starts
         this.gameFrame.getMainMenuPanel().setOnPlayCallBack(this::startGame);
     }
 
     public void startGame(){
-        gameModel = new GameModel();
-        gameController = new GameController(gameFrame,gameModel); //---
+        this.gameModel.modelInit();
         gameModel.addObserver(gameController);
         gameModel.init();
+        this.gameController.startGameLoop(); // ----
     }
 }

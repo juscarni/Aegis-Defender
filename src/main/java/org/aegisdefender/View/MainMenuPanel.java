@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainMenuPanel {
 
@@ -25,6 +27,9 @@ public class MainMenuPanel {
     private Font customFont;
 
     private Runnable onPlayCallback;
+    private int volumeSlider;
+    private List<String[]> playerData;
+
 
     public MainMenuPanel() {
         icons = new ImageIcon[5];
@@ -36,6 +41,7 @@ public class MainMenuPanel {
         menuButton = new JPanel();
 
         //loadIconsImages();
+        this.playerData = new ArrayList<>();
     }
 
     public JPanel menuPanel() {
@@ -54,7 +60,7 @@ public class MainMenuPanel {
 
         menuButton.add(Box.createVerticalStrut(170)); //space between the title and buttons
 
-        String[] menuItems = {"PLAY", "HOW TO PLAY", "SETTINGS", "CREDITS", "EXIT"};
+        String[] menuItems = {"PLAY", "HOW TO PLAY", "HIGH SCORES", "SETTINGS", "CREDITS", "EXIT"};
 
         for (String menuItem : menuItems) {
             button = new ButtonGradient();
@@ -77,7 +83,10 @@ public class MainMenuPanel {
         menu.add(howToPlayPanel(), "howToPlay");
         menu.add(settingsPanel(), "settings");
         menu.add(creditsPanel(), "credits");
+
+        //System.out.println("test " +this.playerData); for debug
         gameOverPanel = new GameOverPanel();  // ---
+
         menu.add(gameOverPanel,"gameOverPanel");
         usernamePanel = new UsernamePanel();
         menu.add(usernamePanel,"usernamePanel");
@@ -99,6 +108,7 @@ public class MainMenuPanel {
                 }
             }
             case "HOW TO PLAY" -> cardLayout.show(menu, "howToPlay");
+            case "HIGH SCORES" -> cardLayout.show(menu, "highScore");//--
             case "SETTINGS" -> cardLayout.show(menu, "settings");
             case "CREDITS" -> cardLayout.show(menu, "credits");
             case "EXIT" -> System.exit(0);
@@ -185,6 +195,7 @@ public class MainMenuPanel {
         scroll.getViewport().setOpaque(false);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
+        SwingUtilities.invokeLater(() -> centerScrollPane(scroll)); //
 
         howToPlayPanel.add(scroll, BorderLayout.CENTER);
         return howToPlayPanel;
@@ -198,6 +209,124 @@ public class MainMenuPanel {
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
     }
+
+    public JPanel highScorePanel(List<String[]> scores) {
+        JPanel highScorePanel = new StarBackgroundPanel();
+        highScorePanel.setLayout(new BorderLayout());
+
+        JPanel content = new JPanel();
+        content.setOpaque(false);
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBorder(BorderFactory.createEmptyBorder(40, 40, 30, 40));
+        content.setBorder(BorderFactory.createEmptyBorder(30, 80, 30, 80));
+
+        // Titre
+        JLabel title = new JLabel("HIGH SCORES");
+        title.setFont(customFont.deriveFont(Font.BOLD, 18f));
+        title.setForeground(new Color(255, 184, 0));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        content.add(title);
+        content.add(Box.createVerticalStrut(30));
+
+        // ── En-tête ───────────────────────────────────────────────────────
+        content.add(createTableRow("#", "USERNAME", "SCORE", "KILLS", "DATE", true));
+        content.add(Box.createVerticalStrut(8));
+
+        // ── Lignes ────────────────────────────────────────────────────────
+        if (scores == null || scores.isEmpty()) {
+            content.add(Box.createVerticalStrut(20));
+            content.add(createLabel("No scores yet. Be the first !", 10f, new Color(168, 180, 208)));
+        } else {
+            for (int i = 0; i < scores.size(); i++) {
+                String[] row = scores.get(i);
+                content.add(createTableRow(
+                        String.valueOf(i + 1),
+                        row[0], // username
+                        row[1], // score
+                        row[2], // kills
+                        row[3], // date
+                        false
+                ));
+                content.add(Box.createVerticalStrut(6));
+            }
+        }
+
+        content.add(Box.createVerticalStrut(30));
+
+        // ── Bouton BACK ───────────────────────────────────────────────────
+        ButtonGradient back = new ButtonGradient();
+        back.setText("< BACK");
+        back.setFont(customFont.deriveFont(Font.PLAIN, 10f));
+        back.setMaximumSize(new Dimension(200, 50));
+        back.setAlignmentX(Component.CENTER_ALIGNMENT);
+        back.addActionListener(e -> cardLayout.show(menu, "mainMenu"));
+        content.add(back);
+
+        JScrollPane scroll = new JScrollPane(content);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        SwingUtilities.invokeLater(() -> centerScrollPane(scroll)); //
+
+        highScorePanel.add(scroll, BorderLayout.CENTER);
+        return highScorePanel;
+    }
+
+    private JPanel createTableRow(String rank, String username, String score,
+                                  String kills, String date, boolean isHeader) {
+        JPanel row = new JPanel(new GridLayout(1, 5));
+        row.setMaximumSize(new Dimension(500, isHeader ? 32 : 40));
+        row.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        if (isHeader) {
+            row.setOpaque(true);
+            row.setBackground(new Color(0, 200, 255, 30));
+            row.setBorder(BorderFactory.createLineBorder(new Color(0, 200, 255, 100), 1));
+        } else {
+            row.setOpaque(true);
+            row.setBackground(new Color(20, 25, 38, 180));
+            row.setBorder(BorderFactory.createLineBorder(new Color(74, 86, 128, 80), 1));
+        }
+
+        Color fg = isHeader ? new Color(0, 200, 255) : new Color(168, 180, 208);
+
+        // Top 3 colorés
+        if (!isHeader) {
+            int r = Integer.parseInt(rank);
+            if      (r == 1) fg = new Color(255, 184, 0);    // or
+            else if (r == 2) fg = new Color(168, 180, 208);  // argent
+            else if (r == 3) fg = new Color(180, 100, 40);   // bronze
+        }
+
+        float fontSize = isHeader ? 8f : 9f;
+        for (String cell : new String[]{rank, username, score, kills, date}) {
+            // this will desplay date and time in the next line
+                if(!cell.equalsIgnoreCase(date)) {
+                    JLabel lbl = new JLabel(cell, SwingConstants.CENTER);
+                    lbl.setFont(customFont.deriveFont(isHeader ? Font.BOLD : Font.PLAIN, fontSize));
+                    lbl.setForeground(fg);
+                    row.add(lbl);
+                }
+                else{
+                    String str = "<html><div style='text-align:center;'>"
+                            + cell.replace("|", "<br>")
+                            + "</div></html>";
+
+                    JLabel lbl = new JLabel(str, SwingConstants.CENTER);
+
+                    lbl.setFont(customFont.deriveFont(
+                            isHeader ? Font.BOLD : Font.PLAIN,
+                            12f
+                    ));
+
+                    lbl.setForeground(fg);
+                    row.add(lbl);
+                }
+            }
+            return row;
+        }
 
     public JPanel settingsPanel() {
         settingsPanel = new StarBackgroundPanel();
@@ -267,6 +396,10 @@ public class MainMenuPanel {
         slider.setForeground(new Color(0, 200, 255));
         slider.setMaximumSize(new Dimension(320, 40));
         slider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        slider.setMajorTickSpacing(20);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.addChangeListener(e -> setVolumeSlider(slider.getValue()));
         return slider;
     }
 
@@ -337,6 +470,7 @@ public class MainMenuPanel {
         scroll.getViewport().setOpaque(false);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
+        SwingUtilities.invokeLater(() -> centerScrollPane(scroll)); //
 
         creditsPanel.add(scroll, BorderLayout.CENTER);
         return creditsPanel;
@@ -425,8 +559,38 @@ public class MainMenuPanel {
     public GameOverPanel getGameOverPanel(){
         return this.gameOverPanel;
     }
-
     public UsernamePanel getUsernamePanel() {
         return this.usernamePanel;
     }
+
+    public void setVolumeSlider(int volume) {
+        this.volumeSlider = volume;
+    }
+
+    public void setAllScore(List<String[]> playerData){
+        this.playerData = playerData;
+        menu.add(highScorePanel(this.playerData), "highScore"); //
+
+        /*just for debug
+        if(!this.playerData.isEmpty()){
+            Arrays.stream(playerData.getFirst()).forEach(System.out::println);
+        }*/
+    }
+
+
+    // this methode center the jscroolpane
+    private void centerScrollPane(JScrollPane scrollPane) {
+        JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+
+        int centerX =
+                (horizontal.getMaximum() - horizontal.getVisibleAmount()) / 2;
+
+        int centerY =
+                (vertical.getMaximum() - vertical.getVisibleAmount()) / 2;
+
+        horizontal.setValue(centerX);
+        vertical.setValue(centerY);
+    }
+
 }

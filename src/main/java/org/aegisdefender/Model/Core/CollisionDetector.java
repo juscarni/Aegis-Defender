@@ -4,7 +4,9 @@ import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.Entities.Player;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 

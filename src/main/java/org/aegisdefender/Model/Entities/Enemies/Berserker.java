@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Berserker extends Enemy {
 
-    private final int contactDamage = 35;
+    private final int contactDamage = 15;
 
     private List<Projectile> projectiles = new ArrayList<>();
     private long lastShootTime = 0;
@@ -69,8 +69,6 @@ public class Berserker extends Enemy {
 
     @Override
     public void enemyBehavior(Player player) {
-        // Per ora: il “danno” è pensato come contatto/melee.
-        // La collisione vera la gestirai altrove (se hai un CollisionManager).
         // Qui ci limitiamo a sparare + muovere.
         updateEnemyProjectiles();
     }

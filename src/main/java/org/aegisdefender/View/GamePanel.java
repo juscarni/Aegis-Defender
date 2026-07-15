@@ -1,15 +1,19 @@
 package org.aegisdefender.View;
 
 import org.aegisdefender.Config.UIConfig;
+import org.aegisdefender.DTO.EnemyRenderData;
+import org.aegisdefender.DTO.PlayerRenderData;
+import org.aegisdefender.DTO.ProjectileRenderData;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends StarBackgroundPanel{
 
-    private int Y_SCROLL = 0;
+    private int Y_SCROLL = 0; //
     private List<Point> impactPoints;
     private PlayerRenderData playerRenderData;
 
@@ -24,11 +28,14 @@ public class GamePanel extends StarBackgroundPanel{
     private Image kamikaze;
     private Image posamine;
     private Image artiliere;
+    private Image berseker;
+
     private Image kamikazeExplosion;
     private Image posamineExplosion;
     private Image artiliereExplosion;
     private Image explosionImage;
     private Image playerInCoolDown;
+    private Image bersekerExplosion;
 
     private Image posamine_projectile;
     private Image artiliere_projectile;
@@ -54,6 +61,7 @@ public class GamePanel extends StarBackgroundPanel{
         this.enemyProjectiles = new ArrayList<>();
 
         impactPoints = new ArrayList<>();
+        this.setCursor(setCursorInvisible());// get an invisible cursor
     }
 
      @Override
@@ -112,13 +120,13 @@ public class GamePanel extends StarBackgroundPanel{
                 this.playerRenderData.height(), null);
 
         // player hitbox
-        g.setColor(Color.red);
+       /* g.setColor(Color.red);
         g.drawRect(
                 this.playerRenderData.hitbox().x,
                 this.playerRenderData.hitbox().y,
                 this.playerRenderData.hitbox().width,
                 this.playerRenderData.hitbox().height
-        );
+        );*/
 
         //player healthBar on the screen
         drawHealthBar(g,
@@ -150,8 +158,8 @@ public class GamePanel extends StarBackgroundPanel{
                    null
            );
            // projectiles HitBox draw
-           g.setColor(Color.RED);
-           g.drawRect(projectile.hitbox().x, projectile.hitbox().y, projectile.hitbox().width, projectile.hitbox().height);
+           //g.setColor(Color.RED);
+           //g.drawRect(projectile.hitbox().x, projectile.hitbox().y, projectile.hitbox().width, projectile.hitbox().height);
        }
     }
 
@@ -161,8 +169,9 @@ public class GamePanel extends StarBackgroundPanel{
             // draw enemy on the screen
             g.drawImage(enemyImage, enemy.x(), enemy.y(), enemy.width(),enemy.height(),null);
             // draw enemy hitbox
-            g.setColor(Color.RED);
-            g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
+
+            //g.setColor(Color.RED);
+            //g.drawRect(enemy.hitbox().x, enemy.hitbox().y, enemy.hitbox().width, enemy.hitbox().height);
             // draw enemy healthBar
             drawHealthBar(
                     g,
@@ -201,6 +210,13 @@ public class GamePanel extends StarBackgroundPanel{
                     this.explosionImage = artiliereExplosion;
                 }
             }
+            case "BERSERKER" -> {
+                enemyImage = berseker;
+                System.out.println("berserker");
+                if(enemy.isExploding()){
+                    //this.explosionImage = artiliereExplosion;
+                }
+            }
         }
         return enemyImage;
     }
@@ -227,8 +243,9 @@ public class GamePanel extends StarBackgroundPanel{
                 // draw artiliere
                 g.drawImage(enemyProjectile, p.x(), p.y(), p.width(), p.height(),null);
                 // draw artiliere hitbox
-                g.setColor(Color.red);
-                g.drawRect(p.hitbox().x, p.hitbox().y, p.hitbox().width, p.hitbox().height);
+
+                /*g.setColor(Color.red);
+                g.drawRect(p.hitbox().x, p.hitbox().y, p.hitbox().width, p.hitbox().height);*/
             }
         }
     }
@@ -290,6 +307,7 @@ public class GamePanel extends StarBackgroundPanel{
         kamikaze = new ImageIcon(getClass().getResource("/Images/Kamikaze_idle.png")).getImage();
         posamine = new ImageIcon(getClass().getResource("/Images/Artillery_Cruiser_Idel.png")).getImage();
         artiliere = new ImageIcon(getClass().getResource("/Images/Artillery_Cruiser_Idel (1).png")).getImage(); //
+        berseker =  new ImageIcon(getClass().getResource("/Images/Berserker_Idel.png")).getImage();
         kamikazeExplosion = new ImageIcon(getClass().getResource("/Images/Kamikaze_Explosion.png")).getImage();
         posamineExplosion = new ImageIcon(getClass().getResource("/Images/posamine_explosion(1).png")).getImage();
         artiliereExplosion = new ImageIcon(getClass().getResource("/Images/artiliere_explosion.png")).getImage();
@@ -392,5 +410,15 @@ public class GamePanel extends StarBackgroundPanel{
         this.impactPoints = new ArrayList<>();
         this.playerRenderData = null;
         repaint();
+    }
+
+    public Cursor setCursorInvisible(){
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        BufferedImage image = new BufferedImage(UIConfig.CURSOR_IMG_SIZE, UIConfig.CURSOR_IMG_SIZE, BufferedImage.TYPE_INT_ARGB);
+        return toolkit.createCustomCursor(
+                image,
+                new Point(UIConfig.HOTSPOT_X,UIConfig.HOTSPOT_Y),
+                UIConfig.CURSOR_NAME
+        );
     }
 }

@@ -2,24 +2,30 @@ package org.aegisdefender.Controller;
 
 import org.aegisdefender.Config.GameConfig;
 
-import org.aegisdefender.Config.UIConfig;
 import org.aegisdefender.Model.Entities.Enemies.Enemy;
 import org.aegisdefender.Model.GameModel;
 import org.aegisdefender.Model.GameObserver;
 import org.aegisdefender.Model.Projectiles.Projectile;
 
-import org.aegisdefender.View.EnemyRenderData;
 import org.aegisdefender.View.GameFrame;
-import org.aegisdefender.View.PlayerRenderData;
-import org.aegisdefender.View.ProjectileRenderData;
 
-import javax.swing.*;
-import java.awt.*;
+import org.aegisdefender.DTO.EnemyRenderData;
+import org.aegisdefender.DTO.PlayerRenderData;
+import org.aegisdefender.DTO.ProjectileRenderData;
+
+import javax.swing.Timer;
+
+import java.awt.Robot;
+import java.awt.Insets;
+import java.awt.Point;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,16 +42,34 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
         this.gameFrame.addMouseMotionListener(this);
         this.gameFrame.addMouseListener(this);
 
+        //
+        setAllScores(this.gameModel.getPlayerData());
+    }
+
+    public void startGameLoop(){
         gameLoop = new Timer(1000/ GameConfig.FPS , this);
         gameLoop.start();
-
+        setAllScores(this.gameModel.getPlayerData()); // read-all if we restart the game.
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        super.mouseMoved(e);
-        this.gameModel.setPLayerX(e.getX());
-        this.gameModel.setPlayerY(e.getY());
+        // Récupère la position relative au GamePanel
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+
+        // Clamp sur les vraies limites du joueur
+        int newX = Math.clamp(mouseX,
+                gameModel.getPLAYER_MIN_X(),
+                gameModel.getPLAYER_MAX_X());
+
+        int newY = Math.clamp(mouseY,
+                gameModel.getPLAYER_MIN_Y(),
+                gameModel.getPLAYER_MAX_Y());
+
+        gameModel.setPlayerX(newX);
+        gameModel.setPlayerY(newY);
+
     }
 
     @Override
@@ -62,39 +86,10 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
             }
             default -> System.out.println("Something goes wrong");
         }
-    }//
-
-    public void setMousePosition(GameFrame gameFrame, int x, int y) {
-        try {
-            Robot robot = new Robot();
-            Point windowPosition = gameFrame.getLocationOnScreen();
-            Insets insets = gameFrame.getInsets();
-
-            int minX = windowPosition.x + insets.left;
-            int minY = windowPosition.y + insets.top;
-            int maxX = minX + UIConfig.WINDOW_WIDTH  - insets.right;
-            int maxY = minY + UIConfig.WINDOW_HEIGHT - insets.bottom;
-
-            Point mouse = MouseInfo.getPointerInfo().getLocation();
-
-            if(mouse.x < minX || mouse.x > maxX || mouse.y < minY || mouse.y > maxY) {
-                robot.mouseMove(
-                        windowPosition.x + UIConfig.WINDOW_WIDTH  / 2,
-                        windowPosition.y + UIConfig.WINDOW_HEIGHT / 2
-                );
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // à voir demain
-        setMousePosition(gameFrame,
-                Math.clamp(this.gameModel.getPlayerX(), this.gameModel.getPLAYER_MIN_X(), this.gameModel.getPLAYER_MAX_X()),
-                Math.clamp(this.gameModel.getPlayerY(), this.gameModel.getPLAYER_MIN_Y(), this.gameModel.getPLAYER_MAX_Y())
-        );
 
         this.gameModel.updateProjectiles();
 
@@ -117,12 +112,12 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
                 .setStats(this.gameModel.getScore(),
                           this.gameModel.getWaveIndex(),
                           this.gameModel.getKills(),
-                          this.gameModel.getScore());
+                          this.gameModel.getBestScore());
 
         // display Score , wave and Best Score on the gamePanel
         this.gameFrame.getGamePanel().setScore(this.gameModel.getScore());
         this.gameFrame.getGamePanel().setWave(this.gameModel.getWaveIndex());
-        this.gameFrame.getGamePanel().setBest(52030); // this will be updated later
+        this.gameFrame.getGamePanel().setBest(this.gameModel.getBestScore());
 
         if(!this.gameModel.isPlayerAlive()){
             this.gameLoop.stop();
@@ -133,7 +128,10 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
                             this.gameModel.getKills(),
                             LocalDateTime.now()
             );
-            this.gameModel.getInfos(); //--ok
+            this.gameModel.savePlayerData();
+            setAllScores(this.gameModel.getPlayerData());//
+
+            calibrateMouse(this.gameFrame);//--
         }
     }
 
@@ -218,5 +216,24 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
 
     public String getUsername(){
         return this.gameFrame.getMainMenuPanel().getUsernamePanel().getUsername();
+    }
+
+    public void calibrateMouse(GameFrame gameFrame) {
+        try {
+            Robot robot = new Robot();
+            Point windowPosition = gameFrame.getLocationOnScreen();
+            Insets insets = gameFrame.getInsets();
+
+            robot.mouseMove(
+                    windowPosition.x + insets.left  + this.gameModel.getPlayerX(),
+                    windowPosition.y + insets.top   + this.gameModel.getPlayerY()
+            );
+        } catch (Exception e) {
+            System.err.println("Failed to calibrate mouse : " + e.getMessage());
+        }
+    }
+
+    public void setAllScores(List<String[]> allScores){
+        this.gameFrame.getMainMenuPanel().setAllScore(allScores);
     }
 }
