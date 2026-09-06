@@ -1,6 +1,6 @@
 package org.aegisdefender;
 
-import org.aegisdefender.Controller.AppController;
+import org.aegisdefender.controller.AppController;
 
 import javax.swing.SwingUtilities;
 
