@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GameModel {
+public class GameModel implements  AudioObseerver {
 
     private Player player;
     private PlayerData playerData;
@@ -84,7 +84,6 @@ public class GameModel {
      ****************************************************************************************************************/
     public void setPlayerX(int x){
         player.setX(x);
-        notifyObserver();
     }
 
     public void setPlayerY(int y){
@@ -207,6 +206,7 @@ public class GameModel {
             for (HitResult hit : hits) {
                 toRemove.add(hit.projectile());
             }
+
             player.playerProjectiles().removeIf(toRemove::contains); //
         }
     }
@@ -219,7 +219,9 @@ public class GameModel {
             for(HitResult hit : Hits) {
                 impactPointsOnEnemyAttackPlayerCurrentFrame.add(hit.impactPoint());
                 System.out.println(hit.enemy().getType() + " has attacked player");
+                //
                 hit.enemy().attack(player);
+
                 // ----
             }
             Set<Projectile> toRemove = new HashSet<>();
@@ -237,6 +239,7 @@ public class GameModel {
     public void collsionOnPlayerEnemy(){
         for(Enemy enemy : activeEnemies){
             if(enemy.getType().equals(EnemyFactory.EnemyType.KAMIKAZE.name()) && collisionDetector.collisiOnPlayerEnemy(enemy)) {
+
                 enemy.attack(player);
             }
         }
@@ -279,5 +282,10 @@ public class GameModel {
 
     public List<String[]> getPlayerData(){
         return this.playerData.getData();
+    }
+
+    @Override
+    public void setVolume(int volume) {
+        audioManager.setVolume(volume);
     }
 }

@@ -39,7 +39,7 @@ public class EnemyFactory {
 
                 k.setX(x);
                 k.setY(y);
-                k.setSpeed(7 /*rand.nextInt(4)*/);
+                k.setSpeed(k.getSpeed() /*rand.nextInt(4)*/);
                 k.setPattern(pattern);        //
 
                 group.add(k);
@@ -60,14 +60,17 @@ public class EnemyFactory {
         }
         else if(type == EnemyType.ARTILIERE) {
             int margin = UIConfig.TILES;
-            int usableWidth = UIConfig.WINDOW_WIDTH - (2 * margin);
+            int usableWidth = UIConfig.WINDOW_WIDTH - (margin*4); // *2
             int spacing = (count <= 1) ? 0 : (usableWidth / (count - 1));
             //int spacing = UIConfig.TILES*3;
-
+            int x = 0;
             for (int i = 0; i < count; i++) {
                 Artiliere a = (Artiliere) createEnemy(type);
-
-                int x = margin + (spacing * i);
+                if(i == 0){
+                    x = margin + 25;
+                }else{
+                    x = margin + (spacing * i);
+                }
                 int y = -UIConfig.TILES * 4 - (i * UIConfig.TILES * 2); // spawn “a scalini” fuori schermo
 
                 a.setX(x);

@@ -1,6 +1,7 @@
 package org.aegisdefender.view;
 
 import org.aegisdefender.config.UIConfig;
+import org.aegisdefender.model.AudioObseerver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class MainMenuPanel {
     private Runnable onPlayCallback;
     private int volumeSlider;
     private List<String[]> playerData;
-
+    private AudioObseerver audioObseerver;
 
     public MainMenuPanel() {
         icons = new ImageIcon[5];
@@ -42,6 +43,10 @@ public class MainMenuPanel {
 
         //loadIconsImages();
         this.playerData = new ArrayList<>();
+    }
+
+    public void addObserver(AudioObseerver ob){
+        audioObseerver = ob;
     }
 
     public JPanel menuPanel() {
@@ -367,13 +372,13 @@ public class MainMenuPanel {
         // ── MUSIC VOLUME ──────────────────────────────────────────────────
         content.add(createLabel("— MUSIC VOLUME —", 10f, new Color(0, 200, 255)));
         content.add(Box.createVerticalStrut(14));
-        content.add(createSlider(80));
+        content.add(createSlider(10));
         content.add(Box.createVerticalStrut(34));
 
         // ── SFX VOLUME ────────────────────────────────────────────────────
         content.add(createLabel("— SFX VOLUME —", 10f, new Color(0, 200, 255)));
         content.add(Box.createVerticalStrut(14));
-        content.add(createSlider(100));
+        content.add(createSliderSFX(100));
         content.add(Box.createVerticalStrut(44));
 
         // ── Bouton BACK ───────────────────────────────────────────────────
@@ -389,6 +394,18 @@ public class MainMenuPanel {
         return settingsPanel;
     }
 
+    private JSlider createSliderSFX(int volumeSlider) {
+        JSlider slider = new JSlider(0, 100, volumeSlider);
+        slider.setOpaque(false);
+        slider.setForeground(new Color(0, 200, 255));
+        slider.setMaximumSize(new Dimension(320, 40));
+        slider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        slider.setMajorTickSpacing(20);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        return slider;
+    }
+
     // Helper slider
     private JSlider createSlider(int defaultValue) {
         JSlider slider = new JSlider(0, 100, defaultValue);
@@ -399,7 +416,10 @@ public class MainMenuPanel {
         slider.setMajorTickSpacing(20);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        slider.addChangeListener(e -> setVolumeSlider(slider.getValue()));
+        slider.addChangeListener(e -> {
+            this.volumeSlider = slider.getValue();
+            this.audioObseerver.setVolume(this.volumeSlider);
+        });
         return slider;
     }
 
@@ -563,8 +583,8 @@ public class MainMenuPanel {
         return this.usernamePanel;
     }
 
-    public void setVolumeSlider(int volume) {
-        this.volumeSlider = volume;
+    public int getVolumeSlider() {
+        return this.volumeSlider;
     }
 
     public void setAllScore(List<String[]> playerData){

@@ -236,4 +236,5 @@ public class GameController extends MouseAdapter implements ActionListener , Gam
     public void setAllScores(List<String[]> allScores){
         this.gameFrame.getMainMenuPanel().setAllScore(allScores);
     }
+
 }

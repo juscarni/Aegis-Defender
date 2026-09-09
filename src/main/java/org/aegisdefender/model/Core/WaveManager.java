@@ -53,7 +53,7 @@ public class WaveManager {
         // --- WAVE 4 ---
         List<EnemyGroup> group4 = new ArrayList<>();
         group4.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 4, 2, 2.0));
-        group4.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 2, 1, 1.5));
+        group4.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 3, 1, 1.5));
         waves.add(new Wave(4, group4));
 
         // --- WAVE 5 --- :---
@@ -78,7 +78,7 @@ public class WaveManager {
 
         // --- WAVE 8 ---
         List<EnemyGroup> group8 = new ArrayList<>();
-        group8.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 6, 2, 1.5));
+        group8.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 3, 2, 1.5));
         group8.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 5, 0, 1.0));
         group8.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 4, 2, 2.0));
         waves.add(new Wave(8, group8));
@@ -87,14 +87,14 @@ public class WaveManager {
         List<EnemyGroup> group9 = new ArrayList<>();
         group9.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 10, 3, 2.5));
         group9.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 6, 0, 1.5));
-        group9.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 5, 2, 1.5));
+        group9.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 3, 2, 1.5));
         waves.add(new Wave(9, group9));
 
         // --- WAVE 10 : Pré-boss ---
         List<EnemyGroup> group10 = new ArrayList<>();
         group10.add(new EnemyGroup(EnemyFactory.EnemyType.KAMIKAZE, 14, 3, 3.0));
         group10.add(new EnemyGroup(EnemyFactory.EnemyType.POSAMINE, 8, 0, 1.0));
-        group10.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 6, 2, 1.5));
+        group10.add(new EnemyGroup(EnemyFactory.EnemyType.ARTILIERE, 3, 2, 1.5));
         waves.add(new Wave(10, group10));
     }
 

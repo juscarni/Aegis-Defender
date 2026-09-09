@@ -21,7 +21,7 @@ public class Artiliere extends Enemy {
     private final int PROJECTILE_HEIGHT = UIConfig.TILES/2;
 
     private long lastShootTime = 0;
-    private static final int SHOOT_DELAY_MS = 200;
+    private static final int SHOOT_DELAY_MS = 800;
 
     private List<Projectile> projectiles = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class Artiliere extends Enemy {
         }
 
         if (!startXInitialized) {
-            startX = this.x - 70;
+            startX = this.x - 70; //
             startXInitialized = true;
         }
 

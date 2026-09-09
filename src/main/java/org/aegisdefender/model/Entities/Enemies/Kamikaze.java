@@ -28,7 +28,7 @@ public class Kamikaze extends Enemy{
     public Kamikaze(){
         this.x = 100;
         this.y = -10;
-        this.speed = 4;
+        this.speed = 7;
         this.health = 100;
         this.width = UIConfig.TILES*3;
         this.height = UIConfig.TILES*3;
@@ -146,6 +146,8 @@ public class Kamikaze extends Enemy{
                 this.width - UIConfig.TILES*2,
                 this.height - UIConfig.TILES*2);
     }
+
+
 
     @Override
     public String getType(){

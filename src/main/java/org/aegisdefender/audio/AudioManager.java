@@ -44,17 +44,21 @@ public class AudioManager {
         }
     }
 
-    private void setVolume(int volumePercent) {
+    public void setVolume(int volumePercent) {
         if (gainControl == null) return;
 
-        // MASTER_GAIN in  dB ( -80.0 à +6.0)
-        float min = gainControl.getMinimum();
-        float max = gainControl.getMaximum();
+        volumePercent = Math.clamp(volumePercent, 0, 100);
 
-        // Conversion % to dB (logarithmique)
-        float value = min + (max - min) * (volumePercent / 100.0f);
-        gainControl.setValue(value);
+        float min = gainControl.getMinimum();
+
+        if (volumePercent == 0) {
+            gainControl.setValue(min);
+        } else {
+            float dB = (float) (20 * Math.log10(volumePercent / 100.0));
+            gainControl.setValue(Math.max(min, dB));
+        }
     }
+
 
     private void stopSound() {
         if (this.backroungSound != null) {

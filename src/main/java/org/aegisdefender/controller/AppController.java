@@ -16,6 +16,7 @@ public class AppController {
 
         // this is a listener , if we click to the button play the game starts
         this.gameFrame.getMainMenuPanel().setOnPlayCallBack(this::startGame);
+        this.gameFrame.getMainMenuPanel().addObserver(gameModel);// model observe
     }
 
     public void startGame(){
